@@ -1,5 +1,7 @@
 package pt.upskills.projeto.gui;
 
+import pt.upskills.projeto.objects.Room;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -65,7 +67,6 @@ public class ImageMatrixGUI extends Observable {
 
 	private int lastKeyPressed;
 	private boolean keyPressed;
-
 	private ImageMatrixGUI() {
 		SQUARE_SIZE = 48;
 		N_SQUARES_WIDTH = 10;
