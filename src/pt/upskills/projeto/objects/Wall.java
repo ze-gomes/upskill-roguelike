@@ -20,4 +20,11 @@ public class Wall implements ImageTile {
     public Position getPosition() {
         return position;
     }
+
+    @Override
+    public String toString() {
+        return "Wall{" +
+                "position=" + position +
+                '}';
+    }
 }

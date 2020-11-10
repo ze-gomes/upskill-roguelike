@@ -36,4 +36,7 @@ public interface ImageTile {
 	 */
 	Position getPosition();
 
+
+	String toString();
+
 }
