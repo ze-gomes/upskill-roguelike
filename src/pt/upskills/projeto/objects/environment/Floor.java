@@ -1,19 +1,19 @@
-package pt.upskills.projeto.objects;
+package pt.upskills.projeto.objects.environment;
 
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
-public class Fire implements ImageTile {
+public class Floor implements ImageTile {
 
     private Position position;
 
-    public Fire(Position position) {
+    public Floor(Position position) {
         this.position = position;
     }
 
     @Override
     public String getName() {
-        return "Fire";
+        return "Floor";
     }
 
     @Override

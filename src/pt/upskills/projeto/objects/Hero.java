@@ -1,9 +1,14 @@
 package pt.upskills.projeto.objects;
 
-import pt.upskills.projeto.game.Engine;
 import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
-import pt.upskills.projeto.gui.MapReader;
+import pt.upskills.projeto.objects.environment.Door;
+import pt.upskills.projeto.objects.environment.DoorClosed;
+import pt.upskills.projeto.objects.environment.Wall;
+import pt.upskills.projeto.objects.mobs.Enemy;
+import pt.upskills.projeto.objects.status.Black;
+import pt.upskills.projeto.objects.status.Fire;
+import pt.upskills.projeto.objects.status.Green;
 import pt.upskills.projeto.rogue.utils.Direction;
 import pt.upskills.projeto.rogue.utils.Position;
 
@@ -13,14 +18,14 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Hero implements ImageTile, Observer {
+public class Hero extends GameCharacter implements ImageTile, Observer {
 
     private Position position;
     private int life;
     private List<ImageTile> statusImages;
 
     public Hero(Position position) {
-        this.position = position;
+        super(position);
         this.life = 5;
         this.statusImages = new ArrayList<ImageTile>();
     }
@@ -52,25 +57,30 @@ public class Hero implements ImageTile, Observer {
         return "Hero";
     }
 
-    @Override
-    public Position getPosition() {
-        return position;
-    }
 
-    //Verifica se uma dada pos é uma parede recorrendo ao currentRoom
-    public boolean checkIfWall(Position pos) {
-        LevelManager levelManager = LevelManager.getInstance();
-        List<ImageTile> roomTiles = levelManager.getCurrentRoom().getRoomImages();
-        for (ImageTile tile : roomTiles) {
-            if (tile.getPosition().equals(pos)) {
-                if (tile instanceof Wall) {
-                    return true;
-                } else
-                    return false;
+    public void moveHero(Position newPos){
+        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        if (!checkCollision(newPos)) {
+            ImageTile novaPosHero = new Hero(newPos);
+            gui.removeImage(this);
+            setPosition(newPos);
+            gui.addImage(this);
+        } else if (getCollisionItem() instanceof Door) {
+            // Only move through if the door is open or Doorway
+            if (!(getCollisionItem() instanceof DoorClosed)) {
+                // Convert ImageTile from getCollisionItem() to Door
+                Door door = (Door) getCollisionItem();
+                System.out.println("Changing to room " +door.getDestRoom());
+                LevelManager levelManager = LevelManager.getInstance();
+                levelManager.changeLevel(this, door);
+                System.out.println("open door");
+            } else{
+                System.out.println("door closed");
             }
         }
-        return false;
     }
+
+
 
     /**
      * This method is called whenever the observed object is changed. This function is called when an
@@ -86,38 +96,21 @@ public class Hero implements ImageTile, Observer {
         updateStatus();
         if (keyCode == KeyEvent.VK_DOWN) {
             // Posicao a mover dada o input
-            Position newPos = position.plus(Direction.DOWN.asVector());
+            Position newPos = getPosition().plus(Direction.DOWN.asVector());
             // Testa se a pos é parede antes de mover, só move se não for parede
-            if (!checkIfWall(newPos)) {
-                ImageTile novaPosHero = new Hero(newPos);
-                gui.removeImage(this);
-                this.position = newPos;
-                gui.addImage(this);
-            }
+            moveHero(newPos);
         }
         if (keyCode == KeyEvent.VK_UP) {
-            Position newPos = position.plus(Direction.UP.asVector());
-            if (!checkIfWall(newPos)) {
-                gui.removeImage(this);
-                this.position = newPos;
-                gui.addImage(this);
-            }
+            Position newPos = getPosition().plus(Direction.UP.asVector());
+            moveHero(newPos);
         }
         if (keyCode == KeyEvent.VK_LEFT) {
-            Position newPos = position.plus(Direction.LEFT.asVector());
-            if (!checkIfWall(newPos)) {
-                gui.removeImage(this);
-                this.position = newPos;
-                gui.addImage(this);
-            }
+            Position newPos = getPosition().plus(Direction.LEFT.asVector());
+            moveHero(newPos);
         }
         if (keyCode == KeyEvent.VK_RIGHT) {
-            Position newPos = position.plus(Direction.RIGHT.asVector());
-            if (!checkIfWall(newPos)) {
-                gui.removeImage(this);
-                this.position = newPos;
-                gui.addImage(this);
-            }
+            Position newPos = getPosition().plus(Direction.RIGHT.asVector());
+            moveHero(newPos);
         }
     }
 }

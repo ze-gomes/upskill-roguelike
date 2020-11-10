@@ -1,0 +1,15 @@
+package pt.upskills.projeto.objects.mobs;
+
+import pt.upskills.projeto.gui.ImageTile;
+import pt.upskills.projeto.rogue.utils.Position;
+
+public class Bat extends Enemy implements ImageTile {
+    public Bat(Position position) {
+        super(position);
+    }
+
+    @Override
+    public String getName() {
+        return "Bat";
+    }
+}

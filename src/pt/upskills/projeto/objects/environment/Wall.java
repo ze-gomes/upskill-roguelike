@@ -1,23 +1,30 @@
-package pt.upskills.projeto.objects;
+package pt.upskills.projeto.objects.environment;
 
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
-public class RedGreen implements ImageTile {
+public class Wall implements ImageTile {
 
     private Position position;
 
-    public RedGreen(Position position) {
+    public Wall(Position position) {
         this.position = position;
     }
 
     @Override
     public String getName() {
-        return "RedGreen";
+        return "Wall";
     }
 
     @Override
     public Position getPosition() {
         return position;
+    }
+
+    @Override
+    public String toString() {
+        return "Wall{" +
+                "position=" + position +
+                '}';
     }
 }

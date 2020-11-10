@@ -1,14 +1,14 @@
 #
+# 0 D room0.txt 1
 # 1 D room0.txt 0
-# 0 D room3.txt 1
 #
 WWWWWWWWWW
-WS   G   W
 W        W
-W       sW
-W        W
-W      W W
-W      W W
+W     WWWW
+WWWWW   sW
+W b      W
+WWWW   W W
+W     TW W
 W  WWWWW W
 0  W     W
 WWWW1WWWWW

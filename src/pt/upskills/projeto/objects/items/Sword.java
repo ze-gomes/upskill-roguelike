@@ -1,19 +1,19 @@
-package pt.upskills.projeto.objects;
+package pt.upskills.projeto.objects.items;
 
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
-public class Bat implements ImageTile {
+public class Sword implements ImageTile {
 
     private Position position;
 
-    public Bat(Position position) {
+    public Sword(Position position) {
         this.position = position;
     }
 
     @Override
     public String getName() {
-        return "Bat";
+        return "Sword";
     }
 
     @Override

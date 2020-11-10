@@ -1,4 +1,4 @@
-package pt.upskills.projeto.objects;
+package pt.upskills.projeto.objects.status;
 
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;

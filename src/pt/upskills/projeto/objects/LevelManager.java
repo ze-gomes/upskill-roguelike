@@ -1,12 +1,17 @@
 package pt.upskills.projeto.objects;
 
 import pt.upskills.projeto.gui.ImageMatrixGUI;
+import pt.upskills.projeto.gui.ImageTile;
+import pt.upskills.projeto.objects.environment.Door;
+import pt.upskills.projeto.rogue.utils.Position;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class LevelManager {
     private static final LevelManager INSTANCE = new LevelManager();
+    Map<String, Room> gameLevels = new HashMap<String, Room>();
+    Room currentRoom;
+
     /**
      * @return Access to the Singleton instance of ImageMatrixGUI
      */
@@ -14,27 +19,35 @@ public class LevelManager {
         return INSTANCE;
     }
 
+    public void changeLevel(Hero hero, Door door){
+        Room destRoom = getGameLevel(door.getDestRoom());
+        Door destDoor = destRoom.getDoor(door.getDestDoor());
+        setCurrentRoom(door.getDestRoom());
+        destRoom.setHeroPos(destDoor.getPosition());
+        // Init gui and populate level
+        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        gui.clearImages();
+        List<ImageTile> tiles = destRoom.getRoomImages();
+        tiles.add(hero);
+        gui.newImages(tiles);
+    }
 
-    List<Room> gameLevels = new ArrayList<Room>();
-    Room currentRoom;
 
     public Room getCurrentRoom() {
         return currentRoom;
     }
 
-    public List<Room> getGameLevels() {
-        return gameLevels;
+    public void setCurrentRoom(String room) {
+        currentRoom = gameLevels.get(room);
     }
 
-    public void setCurrentRoom(Room currentRoom) {
-        this.currentRoom = currentRoom;
+    public Room getGameLevel(String name) {
+        return gameLevels.get(name);
     }
 
-    public void setGameLevels(List<Room> gameLevels) {
-        this.gameLevels = gameLevels;
+
+    public void addGameLevel(String name, Room room) {
+        gameLevels.put(name, room);
     }
 
-    public void addGameLevel(Room room){
-        gameLevels.add(room);
-    }
 }
