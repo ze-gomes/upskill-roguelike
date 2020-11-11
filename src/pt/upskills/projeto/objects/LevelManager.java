@@ -23,7 +23,8 @@ public class LevelManager {
         Room destRoom = getGameLevel(door.getDestRoom());
         Door destDoor = destRoom.getDoor(door.getDestDoor());
         setCurrentRoom(door.getDestRoom());
-        destRoom.setHeroPos(destDoor.getPosition());
+        hero.setPosition(destDoor.getPosition());
+        //destRoom.setHeroPos(destDoor.getPosition());
         // Init gui and populate level
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         gui.clearImages();

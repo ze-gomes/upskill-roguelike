@@ -30,21 +30,21 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         this.statusImages = new ArrayList<ImageTile>();
     }
 
-    public void updateStatus(){
+    public void updateStatus() {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         statusImages.clear();
-        for (int i = 0; i<10; i++){
+        for (int i = 0; i < 10; i++) {
             Position pos = new Position(i, 0);
             ImageTile black = new Black(pos);
             statusImages.add(black);
         }
-        for (int i = 0; i<3; i++){
+        for (int i = 0; i < 3; i++) {
             Position pos = new Position(i, 0);
             ImageTile fire = new Fire(pos);
             statusImages.add(fire);
         }
-        for (int i = 0; i<life; i++){
-                Position posLife = new Position(i+3, 0);
+        for (int i = 0; i < life; i++) {
+            Position posLife = new Position(i + 3, 0);
             ImageTile green = new Green(posLife);
             statusImages.add(green);
 
@@ -58,28 +58,41 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     }
 
 
-    public void moveHero(Position newPos){
+    public void moveHero(Position newPos) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        if (!checkCollision(newPos)) {
-            ImageTile novaPosHero = new Hero(newPos);
+        LevelManager levelManager = LevelManager.getInstance();
+        Room currentRoom = levelManager.getCurrentRoom();
+        // Move if there is no collision and is inside bounds
+        if (!checkCollision(newPos) && checkInsideMapBounds(newPos)) {
             gui.removeImage(this);
             setPosition(newPos);
             gui.addImage(this);
-        } else if (getCollisionItem() instanceof Door) {
-            // Only move through if the door is open or Doorway
-            if (!(getCollisionItem() instanceof DoorClosed)) {
+            System.out.println("Nao colidiu");
+            System.out.println("move");
+        } // Se a nova posicao é fora do mapa, e a posicao actual é uma porta
+          // quer dizer que estamos a entrar numa porta para mudar de nivel
+        if (!checkInsideMapBounds(newPos)) {
+            System.out.println("outside bounds");
+            if (currentRoom.checkDoorPos(getPosition()) != null) {
                 // Convert ImageTile from getCollisionItem() to Door
-                Door door = (Door) getCollisionItem();
-                System.out.println("Changing to room " +door.getDestRoom());
-                LevelManager levelManager = LevelManager.getInstance();
+                Door door = (Door) currentRoom.checkDoorPos(getPosition());
+                System.out.println("Changing to room " + door.getDestRoom() + door.getDestDoor() + "porta");
                 levelManager.changeLevel(this, door);
                 System.out.println("open door");
-            } else{
+            }
+        } else if (getCollisionItem() instanceof Door) {
+            // Only move through a door if the door is open or Doorway
+            if (!(getCollisionItem() instanceof DoorClosed)) {
+                System.out.println("A entrar em porta");
+                gui.removeImage(this);
+                setPosition(newPos);
+                gui.addImage(this);
+
+            } else {
                 System.out.println("door closed");
             }
         }
     }
-
 
 
     /**
@@ -91,26 +104,33 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
+        LevelManager levelManager = LevelManager.getInstance();
+        Room currentRoom = levelManager.getCurrentRoom();
         Integer keyCode = (Integer) arg;
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         updateStatus();
+        System.out.println(this.getPosition());
         if (keyCode == KeyEvent.VK_DOWN) {
             // Posicao a mover dada o input
             Position newPos = getPosition().plus(Direction.DOWN.asVector());
             // Testa se a pos é parede antes de mover, só move se não for parede
             moveHero(newPos);
+            currentRoom.moveEnemiesRoom();
         }
         if (keyCode == KeyEvent.VK_UP) {
             Position newPos = getPosition().plus(Direction.UP.asVector());
             moveHero(newPos);
+            currentRoom.moveEnemiesRoom();
         }
         if (keyCode == KeyEvent.VK_LEFT) {
             Position newPos = getPosition().plus(Direction.LEFT.asVector());
             moveHero(newPos);
+            currentRoom.moveEnemiesRoom();
         }
         if (keyCode == KeyEvent.VK_RIGHT) {
             Position newPos = getPosition().plus(Direction.RIGHT.asVector());
             moveHero(newPos);
+            currentRoom.moveEnemiesRoom();
         }
     }
 }

@@ -3,7 +3,7 @@ package pt.upskills.projeto.objects.environment;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
-public class Door implements ImageTile {
+public abstract class Door implements ImageTile {
     private Position position;
     private int numDoor;
     private String destRoom;

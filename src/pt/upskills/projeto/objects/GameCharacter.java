@@ -10,7 +10,7 @@ public abstract class GameCharacter implements ImageTile {
     private Position position;
     private ImageTile collisionObject;
 
-    public GameCharacter(Position position){
+    public GameCharacter(Position position) {
         this.position = position;
     }
 
@@ -28,29 +28,37 @@ public abstract class GameCharacter implements ImageTile {
         this.position = position;
     }
 
-    public boolean checkCollision(Position pos){
+
+    //Check map bounds for a given position, return TRUE if inside map dimensions
+    public boolean checkInsideMapBounds(Position pos) {
+        return !(pos.getY() >= 10 || pos.getX() >= 10 || pos.getX() < 0 || pos.getY() < 0);
+    }
+
+    public boolean checkCollision(Position pos) {
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
         ImageTile foundImage = currentRoom.checkPosition(pos);
-        //
-        if (foundImage instanceof Enemy){
+        if (foundImage instanceof Enemy) {
             System.out.println("Enemy");
             collisionObject = foundImage;
             return true;
-        } else if (foundImage instanceof Hero){
+        } else if (foundImage instanceof Hero) {
             System.out.println("Hero");
+            collisionObject = foundImage;
             return true;
-        } else if (foundImage instanceof Door){
+        } else if (foundImage instanceof Door) {
             System.out.println("Door");
             collisionObject = foundImage;
             return true;
-        } else if (foundImage instanceof Wall){
+        } else if (foundImage instanceof Wall) {
             System.out.println("Wall");
+            collisionObject = foundImage;
             return true;
             // Floor
-        } else if (foundImage == null){
+        } else if (foundImage == null) {
             return false;
         }
+        collisionObject = null;
         return false;
     }
 }
