@@ -1,10 +1,16 @@
 package pt.upskills.projeto.objects;
 
+import com.sun.tools.javac.Main;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.Wall;
 import pt.upskills.projeto.objects.mobs.Enemy;
 import pt.upskills.projeto.rogue.utils.Position;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 
 public abstract class GameCharacter implements ImageTile {
     private Position position;
@@ -59,4 +65,24 @@ public abstract class GameCharacter implements ImageTile {
         collisionObject = null;
         return false;
     }
+
+    public synchronized void playSound(final String url) {
+        String localDir = System.getProperty("user.dir");
+        new Thread(new Runnable() {
+            // The wrapper thread is unnecessary, unless it blocks on the
+            // Clip finishing; see comments.
+            public void run() {
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                    Main.class.getResourceAsStream("localDir + \\sounds\\" + url));
+                    clip.open(inputStream);
+                    clip.start();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        }).start();
+    }
+
 }

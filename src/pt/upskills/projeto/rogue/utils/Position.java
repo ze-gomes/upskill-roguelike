@@ -57,6 +57,7 @@ public class Position {
     }
 
 
+    // Calculates the distance from a object position to p2
     public double calculateDistance(Position p2) {
             return Math.sqrt((p2.getY() - this.getY()) * (p2.getY() - this.getY()) + (p2.getX() - this.getX()) * (p2.getX() - this.getX()));
     }

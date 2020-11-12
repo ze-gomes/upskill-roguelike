@@ -3,6 +3,8 @@ package pt.upskills.projeto.gui;
 import pt.upskills.projeto.objects.*;
 import pt.upskills.projeto.objects.environment.*;
 import pt.upskills.projeto.objects.items.FloorInteractables;
+import pt.upskills.projeto.objects.items.GoodMeat;
+import pt.upskills.projeto.objects.items.Hammer;
 import pt.upskills.projeto.objects.items.Sword;
 import pt.upskills.projeto.objects.mobs.*;
 import pt.upskills.projeto.rogue.utils.Position;
@@ -117,7 +119,7 @@ public class MapReader {
                     ImageTile w = new Wall(pos);
                     readMapImages.add(w);
                     break;
-                case 'h':
+                case 'H':
                     heroPos = new Position(i, coordY);
                     break;
                 case 'S':
@@ -145,7 +147,16 @@ public class MapReader {
                     FloorInteractables sword = new Sword(pos);
                     readMapImages.add(sword);
                     break;
-
+                case 'h':
+                    pos = new Position(i, coordY);
+                    FloorInteractables hammer = new Hammer(pos);
+                    readMapImages.add(hammer);
+                    break;
+                case 'm':
+                    pos = new Position(i, coordY);
+                    FloorInteractables goodMeat = new GoodMeat(pos);
+                    readMapImages.add(goodMeat);
+                    break;
                 case '0':
                     pos = new Position(i, coordY);
                     Door porta0 = listaPortas.get(0);

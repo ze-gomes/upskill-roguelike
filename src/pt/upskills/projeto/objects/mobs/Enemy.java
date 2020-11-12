@@ -44,6 +44,7 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
 
     // Generate random 2D vector from array
     public Vector2D getRandomVectorMovement() {
+        System.out.println("Normal random");
         Vector2D[] vectorArray = new Vector2D[4];
         vectorArray[0] = Direction.DOWN.asVector();
         vectorArray[1] = Direction.UP.asVector();
@@ -57,14 +58,14 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         LevelManager levelManager = LevelManager.getInstance();
         Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
         Position enemyPos = this.getPosition();
-        // Check if hero is above and check
-        if (heroPos.getY() < enemyPos.getY() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.UP.asVector())) instanceof Wall)){
+        // Check the coordinates in which the hero is closer and if moving that coordinate will
+        if (heroPos.getY() < enemyPos.getY() && !(checkCollision(enemyPos.plus(Direction.UP.asVector())))){
             return Direction.UP.asVector();
-        } else if (heroPos.getX() < enemyPos.getX() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.LEFT.asVector())) instanceof Wall)) {
+        } else if (heroPos.getX() < enemyPos.getX() && !(checkCollision(enemyPos.plus(Direction.LEFT.asVector())))){
             return Direction.LEFT.asVector();
-        } else if (heroPos.getY() > enemyPos.getY() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.DOWN.asVector())) instanceof Wall)) {
+        } else if (heroPos.getY() > enemyPos.getY() && !(checkCollision(enemyPos.plus(Direction.DOWN.asVector())))){
             return Direction.DOWN.asVector();
-        } else if (heroPos.getX() > enemyPos.getX() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.RIGHT.asVector())) instanceof Wall)) {
+        } else if (heroPos.getX() > enemyPos.getX() && !(checkCollision(enemyPos.plus(Direction.RIGHT.asVector())))){
             return Direction.RIGHT.asVector();
         }
         return getRandomVectorMovement();
@@ -76,9 +77,8 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         LevelManager levelManager = LevelManager.getInstance();
         Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
         Position enemyPos = this.getPosition();
-        //int distance = (int) Math.round(Point2D.distance(heroPos.getX(), heroPos.getY(), enemyPos.getX(), enemyPos.getY()));
-        System.out.println(Point2D.distance(heroPos.getX(), heroPos.getY(), enemyPos.getX(), enemyPos.getY()));
-        return Point2D.distance(heroPos.getX(), heroPos.getY(), enemyPos.getX(), enemyPos.getY());
+        System.out.println(heroPos.calculateDistance(enemyPos));
+        return heroPos.calculateDistance(enemyPos);
     }
 
     public void movement() {

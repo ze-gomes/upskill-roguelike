@@ -2,12 +2,12 @@
 # 0 D room1.txt 1
 #
 WWWW0WWWWW
-W        W
-W      T W
+W m     sW
+W   h  T W
 WWWWW  s W
 W   W    W
 W   W  WWW
-W  h     W
+W  H     W
 W      B W
 W        W
 WWWWWWWWWW
