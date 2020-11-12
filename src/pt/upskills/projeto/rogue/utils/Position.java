@@ -56,6 +56,11 @@ public class Position {
         return true;
     }
 
+
+    public double calculateDistance(Position p2) {
+            return Math.sqrt((p2.getY() - this.getY()) * (p2.getY() - this.getY()) + (p2.getX() - this.getX()) * (p2.getX() - this.getX()));
+    }
+
     public Position plus(Vector2D vector2d) {
         return new Position(getX()+ vector2d.getX(), getY()+ vector2d.getY());
     }

@@ -4,7 +4,6 @@ import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.Floor;
-import pt.upskills.projeto.objects.items.FloorInteractables;
 import pt.upskills.projeto.objects.mobs.Enemy;
 import pt.upskills.projeto.rogue.utils.Position;
 
@@ -13,14 +12,13 @@ import java.util.List;
 
 public class Room {
     private String nome;
-    private Position heroPos;
     private List<ImageTile> roomImages;
     private HashMap<Integer, Door> listaPortas;
+    private Hero hero;
 
 
-    public Room(String nome, List<ImageTile> readMapImages, Position heroPos, HashMap<Integer, Door> listaPortas) {
+    public Room(String nome, List<ImageTile> readMapImages, HashMap<Integer, Door> listaPortas) {
         this.nome = nome;
-        this.heroPos = heroPos;
         this.roomImages = readMapImages;
         this.listaPortas = listaPortas;
     }
@@ -33,13 +31,25 @@ public class Room {
         return nome;
     }
 
-    public Position getHeroPos() {
-        return heroPos;
+
+    public void setHero(Hero hero) {
+        this.hero = hero;
     }
 
-    public void setHeroPos(Position heroPos) {
-        this.heroPos = heroPos;
+    public Hero getHero() {
+        return hero;
     }
+
+    public Hero getHero1() {
+        for (ImageTile tile : roomImages) {
+            if (tile instanceof Hero) {
+                Hero hero = (Hero) tile;
+                return hero;
+            }
+        }
+        return null;
+    }
+
 
     public ImageTile checkPosition(Position position) {
         for (ImageTile tile : roomImages) {
@@ -80,23 +90,16 @@ public class Room {
         }
     }
 
-    // Remove enemy from room tile list
-    public void removeEnemyRoom(Enemy enemy) {
+
+    public void removeObject(ImageTile tile) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        roomImages.remove(enemy);
-//        for (ImageTile image : roomImages) {
-//            if (image instanceof Enemy) {
-//                roomImages.remove(image);
-//                gui.removeImage(image);
-//            }
-//        }
+        gui.removeImage(tile);
+        roomImages.remove(tile);
     }
 
-    // Remove enemy from room tile list
-    public void removeFloorInteractableRoom(FloorInteractables floor) {
+    public void addObject(ImageTile tile) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        roomImages.remove(floor);
+        gui.addImage(tile);
+        roomImages.add(tile);
     }
-
-
 }

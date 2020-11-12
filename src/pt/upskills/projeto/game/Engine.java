@@ -23,7 +23,8 @@ public class Engine {
         // Init gui and populate level
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         List<ImageTile> tiles = levelManager.getCurrentRoom().getRoomImages();
-        Hero hero = new Hero(levelManager.getCurrentRoom().getHeroPos());
+        Hero hero = new Hero(mapReader.getStartHeroPos());
+        levelManager.getCurrentRoom().setHero(hero);
         tiles.add(hero);
         gui.addObserver(hero);
         hero.updateStatus();

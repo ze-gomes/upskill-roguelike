@@ -3,7 +3,7 @@
 #
 WWWW0WWWWW
 W        W
-W  S     W
+W      T W
 WWWWW  s W
 W   W    W
 W   W  WWW

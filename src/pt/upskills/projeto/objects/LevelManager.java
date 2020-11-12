@@ -30,6 +30,7 @@ public class LevelManager {
         tiles.add(hero);
         gui.newImages(tiles);
         setCurrentRoom(door.getDestRoom());
+        getCurrentRoom().setHero(hero);
     }
 
 

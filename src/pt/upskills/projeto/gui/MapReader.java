@@ -33,6 +33,7 @@ public class MapReader {
                 readMapImages = new ArrayList<ImageTile>();
                 listaPortas = new HashMap<Integer, Door>();
                 Scanner fileScanner = new Scanner(f);
+                addFloor();
                 // Contador para obter as coordenadas do y
                 int numLinha = 0;
                 while (fileScanner.hasNextLine()) {
@@ -47,7 +48,7 @@ public class MapReader {
                     }
                 }
                 // Create room for each file and add to levelManager singleton
-                levelManager.addGameLevel(f.getName(), new Room(f.getName(), readMapImages, heroPos, listaPortas));
+                levelManager.addGameLevel(f.getName(), new Room(f.getName(), readMapImages, listaPortas));
                 // Fecha o fileScanner
                 fileScanner.close();
             }
@@ -60,7 +61,7 @@ public class MapReader {
         }
     }
 
-    public Position getHeroPos() {
+    public Position getStartHeroPos() {
         return heroPos;
     }
 
@@ -92,6 +93,18 @@ public class MapReader {
         }
     }
 
+    //Adds floor below things
+    public void addFloor() {
+        Position pos;
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                pos = new Position(x, y);
+                ImageTile f = new Floor(pos);
+                readMapImages.add(f);
+            }
+        }
+    }
+
 
     // Create the corresponding objects for each line of the map read and add them to the list
     public void readLine(String line, int coordY) {
@@ -106,72 +119,52 @@ public class MapReader {
                     break;
                 case 'h':
                     heroPos = new Position(i, coordY);
-                    ImageTile f = new Floor(heroPos);
-                    readMapImages.add(f);
                     break;
                 case 'S':
                     pos = new Position(i, coordY);
                     Enemy skeleton = new Skeleton(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(skeleton);
                     break;
                 case 'G':
                     pos = new Position(i, coordY);
                     Enemy badGuy = new BadGuy(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(badGuy);
                     break;
                 case 'B':
                     pos = new Position(i, coordY);
                     Enemy bat = new Bat(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(bat);
                     break;
                 case 'T':
                     pos = new Position(i, coordY);
                     Enemy thief = new Thief(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(thief);
                     break;
                 case 's':
                     pos = new Position(i, coordY);
                     FloorInteractables sword = new Sword(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(sword);
                     break;
+
                 case '0':
                     pos = new Position(i, coordY);
                     Door porta0 = listaPortas.get(0);
                     porta0.setPosition(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(porta0);
                     break;
                 case '1':
                     pos = new Position(i, coordY);
                     Door porta1 = listaPortas.get(1);
                     porta1.setPosition(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(porta1);
                     break;
                 case '2':
                     pos = new Position(i, coordY);
                     Door porta2 = listaPortas.get(2);
                     porta2.setPosition(pos);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     readMapImages.add(porta2);
                     break;
                 default:
-                    pos = new Position(i, coordY);
-                    f = new Floor(pos);
-                    readMapImages.add(f);
                     break;
             }
         }

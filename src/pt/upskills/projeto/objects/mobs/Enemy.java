@@ -7,10 +7,12 @@ import pt.upskills.projeto.objects.Hero;
 import pt.upskills.projeto.objects.LevelManager;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.DoorClosed;
+import pt.upskills.projeto.objects.environment.Wall;
 import pt.upskills.projeto.rogue.utils.Direction;
 import pt.upskills.projeto.rogue.utils.Position;
 import pt.upskills.projeto.rogue.utils.Vector2D;
 
+import java.awt.geom.Point2D;
 import java.util.Random;
 
 public abstract class Enemy extends GameCharacter implements ImageTile {
@@ -36,6 +38,10 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         return mobHP;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
     // Generate random 2D vector from array
     public Vector2D getRandomVectorMovement() {
         Vector2D[] vectorArray = new Vector2D[4];
@@ -46,19 +52,57 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         return vectorArray[random.nextInt(vectorArray.length)];
     }
 
+    // Get random vector in the direction of hero
+    public Vector2D getDirectionHero(){
+        LevelManager levelManager = LevelManager.getInstance();
+        Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
+        Position enemyPos = this.getPosition();
+        // Check if hero is above and check
+        if (heroPos.getY() < enemyPos.getY() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.UP.asVector())) instanceof Wall)){
+            return Direction.UP.asVector();
+        } else if (heroPos.getX() < enemyPos.getX() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.LEFT.asVector())) instanceof Wall)) {
+            return Direction.LEFT.asVector();
+        } else if (heroPos.getY() > enemyPos.getY() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.DOWN.asVector())) instanceof Wall)) {
+            return Direction.DOWN.asVector();
+        } else if (heroPos.getX() > enemyPos.getX() && !(levelManager.getCurrentRoom().checkPosition(enemyPos.plus(Direction.RIGHT.asVector())) instanceof Wall)) {
+            return Direction.RIGHT.asVector();
+        }
+        return getRandomVectorMovement();
+    }
+
+
+    //Get distance to hero
+    public double distanceToHero() {
+        LevelManager levelManager = LevelManager.getInstance();
+        Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
+        Position enemyPos = this.getPosition();
+        //int distance = (int) Math.round(Point2D.distance(heroPos.getX(), heroPos.getY(), enemyPos.getX(), enemyPos.getY()));
+        System.out.println(Point2D.distance(heroPos.getX(), heroPos.getY(), enemyPos.getX(), enemyPos.getY()));
+        return Point2D.distance(heroPos.getX(), heroPos.getY(), enemyPos.getX(), enemyPos.getY());
+    }
+
     public void movement() {
         // Cria random new pos from random Vector2D
         Position newRandomPos = this.getPosition().plus(getRandomVectorMovement());
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         // Se nao colidiu com nada na nova posiçao e esta dentro dos map bounds,
         // entao move para a nova posiçao
-        if (!checkCollision(newRandomPos) && (checkInsideMapBounds(newRandomPos))) {
-            gui.removeImage(this);
-            this.setPosition(newRandomPos);
-            gui.addImage(this);
-        } else if (getCollisionItem() instanceof Hero) {
-            Hero hero = (Hero) getCollisionItem();
+        if (distanceToHero() > 4.0) {
+            if (!checkCollision(newRandomPos) && (checkInsideMapBounds(newRandomPos))) {
+                this.setPosition(newRandomPos);
+            }
+        } else if (distanceToHero() > 1.0) {
+            Position posDirectionHero = getPosition().plus(getDirectionHero());
+            if (!checkCollision(posDirectionHero) && (checkInsideMapBounds(posDirectionHero))) {
+                this.setPosition(posDirectionHero);
+            }
+        }
+        else {
+            LevelManager levelManager = LevelManager.getInstance();
+            Hero hero = levelManager.getCurrentRoom().getHero();
             hero.takeDamage(damage);
+            hero.updateStatus();
+
         }
     }
 
