@@ -22,15 +22,14 @@ public class LevelManager {
     public void changeLevel(Hero hero, Door door){
         Room destRoom = getGameLevel(door.getDestRoom());
         Door destDoor = destRoom.getDoor(door.getDestDoor());
-        setCurrentRoom(door.getDestRoom());
-        hero.setPosition(destDoor.getPosition());
-        //destRoom.setHeroPos(destDoor.getPosition());
         // Init gui and populate level
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        hero.setPosition(destDoor.getPosition());
         gui.clearImages();
         List<ImageTile> tiles = destRoom.getRoomImages();
         tiles.add(hero);
         gui.newImages(tiles);
+        setCurrentRoom(door.getDestRoom());
     }
 
 

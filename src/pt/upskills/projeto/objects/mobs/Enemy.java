@@ -15,13 +15,24 @@ import java.util.Random;
 
 public abstract class Enemy extends GameCharacter implements ImageTile {
     private Random random = new Random();
+    private int damage;
+    private int mobHP;
 
-    public Enemy(Position position) {
+    public Enemy(Position position, int damage, int hp) {
         super(position);
+        this.damage = damage;
+        this.mobHP = hp;
     }
 
     public abstract String getName();
 
+    public void takeDamage(int damage) {
+        this.mobHP -= damage;
+    }
+
+    public int getMobHP() {
+        return mobHP;
+    }
 
     // Generate random 2D vector from array
     public Vector2D getRandomVectorMovement() {
@@ -35,14 +46,17 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
 
     public void movement() {
         // Cria random new pos from random Vector2D
-        Position newRandomPos = getPosition().plus(getRandomVectorMovement());
+        Position newRandomPos = this.getPosition().plus(getRandomVectorMovement());
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         // Se nao colidiu com nada na nova posiçao e esta dentro dos map bounds,
         // entao move para a nova posiçao
         if (!checkCollision(newRandomPos) && (checkInsideMapBounds(newRandomPos))) {
             gui.removeImage(this);
-            setPosition(newRandomPos);
+            this.setPosition(newRandomPos);
             gui.addImage(this);
+        } else if (getCollisionItem() instanceof Hero){
+            Hero hero = (Hero) getCollisionItem();
+            hero.takeDamage(damage);
         }
     }
 

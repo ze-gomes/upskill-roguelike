@@ -15,7 +15,6 @@ import java.util.Scanner;
 
 public class MapReader {
     private List<ImageTile> readMapImages;
-    private List<Enemy> readMapEnemies;
     private Position heroPos;
     private HashMap<Integer, Door> listaPortas;
 
@@ -32,7 +31,6 @@ public class MapReader {
                 // Para cada ficheiro cria e armazena uma lista de objectos ImageTile e uma Lista de Portas
                 readMapImages = new ArrayList<ImageTile>();
                 listaPortas = new HashMap<Integer, Door>();
-                readMapEnemies = new ArrayList<Enemy>();
                 Scanner fileScanner = new Scanner(f);
                 // Contador para obter as coordenadas do y
                 int numLinha = 0;
@@ -48,7 +46,7 @@ public class MapReader {
                     }
                 }
                 // Create room for each file and add to levelManager singleton
-                levelManager.addGameLevel(f.getName(), new Room(f.getName(), readMapImages, heroPos, listaPortas, readMapEnemies));
+                levelManager.addGameLevel(f.getName(), new Room(f.getName(), readMapImages, heroPos, listaPortas));
                 // Fecha o fileScanner
                 fileScanner.close();
             }
@@ -117,7 +115,6 @@ public class MapReader {
                     f = new Floor(pos);
                     readMapImages.add(f);
                     readMapImages.add(skeleton);
-                    readMapEnemies.add(skeleton);
                     break;
                 case 'G':
                     pos = new Position(i, coordY);
@@ -125,7 +122,6 @@ public class MapReader {
                     f = new Floor(pos);
                     readMapImages.add(f);
                     readMapImages.add(badGuy);
-                    readMapEnemies.add(badGuy);
                     break;
                 case 'B':
                     pos = new Position(i, coordY);
@@ -133,7 +129,6 @@ public class MapReader {
                     f = new Floor(pos);
                     readMapImages.add(f);
                     readMapImages.add(bat);
-                    readMapEnemies.add(bat);
                     break;
                 case 'T':
                     pos = new Position(i, coordY);
@@ -141,7 +136,6 @@ public class MapReader {
                     f = new Floor(pos);
                     readMapImages.add(f);
                     readMapImages.add(thief);
-                    readMapEnemies.add(thief);
                     break;
                 case 's':
                     pos = new Position(i, coordY);

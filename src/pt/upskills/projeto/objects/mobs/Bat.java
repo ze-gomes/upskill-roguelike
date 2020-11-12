@@ -4,8 +4,9 @@ import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
 public class Bat extends Enemy implements ImageTile {
+
     public Bat(Position position) {
-        super(position);
+        super(position, 1, 2);
     }
 
     @Override

@@ -34,27 +34,25 @@ public abstract class GameCharacter implements ImageTile {
         return !(pos.getY() >= 10 || pos.getX() >= 10 || pos.getX() < 0 || pos.getY() < 0);
     }
 
+
+    // Check collision for all game characters
     public boolean checkCollision(Position pos) {
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
         ImageTile foundImage = currentRoom.checkPosition(pos);
         if (foundImage instanceof Enemy) {
-            System.out.println("Enemy");
             collisionObject = foundImage;
             return true;
         } else if (foundImage instanceof Hero) {
-            System.out.println("Hero");
             collisionObject = foundImage;
             return true;
         } else if (foundImage instanceof Door) {
-            System.out.println("Door");
             collisionObject = foundImage;
             return true;
         } else if (foundImage instanceof Wall) {
-            System.out.println("Wall");
             collisionObject = foundImage;
             return true;
-            // Floor
+            // null means it's the Floor
         } else if (foundImage == null) {
             return false;
         }

@@ -6,7 +6,7 @@ import pt.upskills.projeto.rogue.utils.Position;
 public class Skeleton extends Enemy implements ImageTile {
 
     public Skeleton(Position position) {
-        super(position);
+        super(position, 1, 4);
     }
 
     @Override
