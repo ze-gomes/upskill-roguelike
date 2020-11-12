@@ -3,10 +3,10 @@
 # 0 D room3.txt 1
 #
 WWWWWWWWWW
-WS   G   W
-W        W
-W       sW
-W        W
+WS  G    W
+W  WW    W
+W WW    sW
+W W      W
 W      W W
 W      W W
 W  WWWWW W

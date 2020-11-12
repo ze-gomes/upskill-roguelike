@@ -2,10 +2,7 @@ package pt.upskills.projeto.gui;
 
 import pt.upskills.projeto.objects.*;
 import pt.upskills.projeto.objects.environment.*;
-import pt.upskills.projeto.objects.items.FloorInteractables;
-import pt.upskills.projeto.objects.items.GoodMeat;
-import pt.upskills.projeto.objects.items.Hammer;
-import pt.upskills.projeto.objects.items.Sword;
+import pt.upskills.projeto.objects.items.*;
 import pt.upskills.projeto.objects.mobs.*;
 import pt.upskills.projeto.rogue.utils.Position;
 
@@ -151,6 +148,21 @@ public class MapReader {
                     pos = new Position(i, coordY);
                     FloorInteractables hammer = new Hammer(pos);
                     readMapImages.add(hammer);
+                    break;
+                case 'g':
+                    pos = new Position(i, coordY);
+                    ImageTile grass = new Grass(pos);
+                    readMapImages.add(grass);
+                    break;
+                case 'k':
+                    pos = new Position(i, coordY);
+                    FloorInteractables key = new Key(pos);
+                    readMapImages.add(key);
+                    break;
+                case 't':
+                    pos = new Position(i, coordY);
+                    FloorInteractables trap = new Trap(pos);
+                    readMapImages.add(trap);
                     break;
                 case 'm':
                     pos = new Position(i, coordY);
