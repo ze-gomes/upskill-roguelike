@@ -4,6 +4,7 @@ import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.DoorClosed;
+import pt.upskills.projeto.objects.items.FloorInteractables;
 import pt.upskills.projeto.objects.items.Sword;
 import pt.upskills.projeto.objects.mobs.Enemy;
 import pt.upskills.projeto.objects.status.*;
@@ -24,6 +25,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     private int damage;
     private List<ImageTile> statusImages;
     private boolean sword;
+    private int score;
 
     public Hero(Position position) {
         super(position);
@@ -31,8 +33,18 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         this.damage = 2;
         this.statusImages = new ArrayList<ImageTile>();
         this.sword = false;
+        this.score = 0;
     }
 
+
+    // Prevents score from dropping below 0
+    public void addScore(int score) {
+        if (this.score + score < 0) {
+            this.score += 0;
+        } else {
+            this.score += score;
+        }
+    }
 
     public void takeDamage(int damage) {
         this.currentHP -= damage;
@@ -74,8 +86,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         }
         if (sword) {
             Position posSword = new Position(7, 0);
-            ImageTile sword = new Sword(posSword);
+            Sword sword = new Sword(posSword);
             statusImages.add(sword);
+            addScore(sword.getScore());
         }
         gui.newStatusImages(statusImages);
         System.out.println("Current Damage: " + damage + " Has sword: " + sword);
@@ -86,18 +99,31 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         return "Hero";
     }
 
+    public FloorInteractables getStatusPosition(Position pos) {
+        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        for (ImageTile statusImage : statusImages) {
+            if (statusImage.getPosition().equals(pos) && (statusImage instanceof FloorInteractables)) {
+                System.out.println(statusImage.getName());
+                return (FloorInteractables) statusImage;
+            }
+        }
+        return null;
+    }
+
     // Check if there are any pickups or traps on the floor
     // (no collision but requires an action when you go over it)
-    public void checkIfGroundAction(){
+    public void checkIfGroundAction() {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
         ImageTile floor = currentRoom.checkPosition(getPosition());
-        System.out.println(floor.getName());
-        if (floor instanceof Sword){
+        // Se o chao é sword e nao tem espada ainda
+        if (floor instanceof FloorInteractables && (!sword)) {
+            FloorInteractables floorInteractable = (FloorInteractables) floor;
             this.sword = true;
             this.damage += 2;
-            gui.removeImage(floor);
+            gui.removeImage(floorInteractable);
+            currentRoom.removeFloorInteractableRoom(floorInteractable);
         }
     }
 
@@ -108,16 +134,16 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         // Move if there is no collision and is inside bounds
         if (!checkCollision(newPos) && checkInsideMapBounds(newPos)) {
             checkIfGroundAction();
-
-            gui.removeImage(this);
+            addScore(-1);
             setPosition(newPos);
-            gui.addImage(this);
             // If collision is Enemy, do damage and check if enemy dies
         } else if (getCollisionItem() instanceof Enemy) {
             Enemy enemy = (Enemy) getCollisionItem();
             enemy.takeDamage(damage);
-            if (enemy.getMobHP()<=0){
+            if (enemy.getMobHP() <= 0) {
+                currentRoom.removeEnemyRoom(enemy);
                 gui.removeImage(enemy);
+                addScore(enemy.getScore());
             }
         }
         // Se a nova posicao é fora do mapa, e a posicao actual é uma porta
@@ -136,6 +162,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 gui.removeImage(this);
                 setPosition(newPos);
                 gui.addImage(this);
+                addScore(-1);
             } else {
                 // Closed door
                 System.out.println("door closed");
@@ -157,6 +184,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         Room currentRoom = levelManager.getCurrentRoom();
         Integer keyCode = (Integer) arg;
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        System.out.println("O Score atual é: " + score);
         updateStatus();
         if (keyCode == KeyEvent.VK_DOWN) {
             // Posicao a mover dada o input
@@ -179,6 +207,23 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             Position newPos = getPosition().plus(Direction.RIGHT.asVector());
             moveHero(newPos);
             currentRoom.moveEnemiesRoom();
+        }
+        if (keyCode == KeyEvent.VK_1) {
+            Position pos = new Position(7, 0);
+            if (getStatusPosition(pos) != null){
+                FloorInteractables statusImage1 = getStatusPosition(pos);
+                gui.removeStatusImage(statusImage1);
+                statusImage1.setPosition(getPosition());
+                gui.addImage(statusImage1);
+                sword = false;
+            }
+        }
+        if (keyCode == KeyEvent.VK_2) {
+            Position pos = getPosition();
+        }
+        if (keyCode == KeyEvent.VK_3) {
+            Position pos = getPosition();
+
         }
     }
 }

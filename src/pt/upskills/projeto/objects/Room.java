@@ -4,6 +4,7 @@ import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.Floor;
+import pt.upskills.projeto.objects.items.FloorInteractables;
 import pt.upskills.projeto.objects.mobs.Enemy;
 import pt.upskills.projeto.rogue.utils.Position;
 
@@ -45,7 +46,6 @@ public class Room {
             if (tile.getPosition().equals(position)) {
                 // If for a given position the object found is Not floor, return that object
                 if (!(tile instanceof Floor)) {
-                    System.out.println(tile.getName());
                     return tile;
                 }
             }
@@ -83,12 +83,19 @@ public class Room {
     // Remove enemy from room tile list
     public void removeEnemyRoom(Enemy enemy) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        for (ImageTile image : roomImages) {
-            if (image instanceof Enemy) {
-                roomImages.remove(image);
-                gui.removeImage(image);
-            }
-        }
+        roomImages.remove(enemy);
+//        for (ImageTile image : roomImages) {
+//            if (image instanceof Enemy) {
+//                roomImages.remove(image);
+//                gui.removeImage(image);
+//            }
+//        }
+    }
+
+    // Remove enemy from room tile list
+    public void removeFloorInteractableRoom(FloorInteractables floor) {
+        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        roomImages.remove(floor);
     }
 
 

@@ -2,6 +2,7 @@ package pt.upskills.projeto.gui;
 
 import pt.upskills.projeto.objects.*;
 import pt.upskills.projeto.objects.environment.*;
+import pt.upskills.projeto.objects.items.FloorInteractables;
 import pt.upskills.projeto.objects.items.Sword;
 import pt.upskills.projeto.objects.mobs.*;
 import pt.upskills.projeto.rogue.utils.Position;
@@ -106,7 +107,6 @@ public class MapReader {
                 case 'h':
                     heroPos = new Position(i, coordY);
                     ImageTile f = new Floor(heroPos);
-                    Hero h = new Hero(heroPos);
                     readMapImages.add(f);
                     break;
                 case 'S':
@@ -139,7 +139,7 @@ public class MapReader {
                     break;
                 case 's':
                     pos = new Position(i, coordY);
-                    ImageTile sword = new Sword(pos);
+                    FloorInteractables sword = new Sword(pos);
                     f = new Floor(pos);
                     readMapImages.add(f);
                     readMapImages.add(sword);

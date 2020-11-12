@@ -17,11 +17,13 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
     private Random random = new Random();
     private int damage;
     private int mobHP;
+    private int score;
 
-    public Enemy(Position position, int damage, int hp) {
+    public Enemy(Position position, int damage, int hp, int score) {
         super(position);
         this.damage = damage;
         this.mobHP = hp;
+        this.score = score;
     }
 
     public abstract String getName();
@@ -54,11 +56,13 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
             gui.removeImage(this);
             this.setPosition(newRandomPos);
             gui.addImage(this);
-        } else if (getCollisionItem() instanceof Hero){
+        } else if (getCollisionItem() instanceof Hero) {
             Hero hero = (Hero) getCollisionItem();
             hero.takeDamage(damage);
         }
     }
 
-
+    public int getScore() {
+        return score;
+    }
 }

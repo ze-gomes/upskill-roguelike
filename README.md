@@ -5,3 +5,12 @@
 UpSkill first project in Java. A roguelike game
 
 **Work in progress**
+
+
+To do
+- Fix mob collisions
+- Fix Mob deletion
+- Traps and pickups
+- Save and restore game
+- Fireballs
+- Complete

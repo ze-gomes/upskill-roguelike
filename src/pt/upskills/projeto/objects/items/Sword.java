@@ -3,12 +3,10 @@ package pt.upskills.projeto.objects.items;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
-public class Sword implements ImageTile {
-
-    private Position position;
+public class Sword extends FloorInteractables implements ImageTile {
 
     public Sword(Position position) {
-        this.position = position;
+        super (position, 10);
     }
 
     @Override
@@ -16,8 +14,5 @@ public class Sword implements ImageTile {
         return "Sword";
     }
 
-    @Override
-    public Position getPosition() {
-        return position;
-    }
+
 }
