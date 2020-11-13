@@ -1,12 +1,12 @@
 #
-# 0 D room1.txt 0
+# 0 D room2.txt 1 key
 #
 WWWW0WWWWW
 Wggg ggggW
-WgB     gW
-WWWW W  gW
-Wg      gW
-Wg   W WWW
+WgB   m gW
+WWWW W mgW
+Wg h m  gW
+Wgs kW WWW
 Wg   W BgW
 Wg   WW gW
 WgggHggggW

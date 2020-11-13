@@ -4,9 +4,11 @@ import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
 public class Key extends FloorInteractables implements ImageTile {
+    private String code;
 
-    public Key(Position position) {
-        super (position, 10);
+    public Key(Position position, String nome) {
+        super (position,  20, 0);
+        this.code = nome;
     }
 
     @Override
@@ -14,5 +16,7 @@ public class Key extends FloorInteractables implements ImageTile {
         return "Key";
     }
 
-
+    public String getCode() {
+        return code;
+    }
 }

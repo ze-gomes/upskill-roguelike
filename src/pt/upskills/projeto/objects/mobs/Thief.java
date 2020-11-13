@@ -72,7 +72,7 @@ public class Thief extends Enemy implements ImageTile {
         } else { // Thief can attack in diagonal (distance < 2)
             LevelManager levelManager = LevelManager.getInstance();
             Hero hero = levelManager.getCurrentRoom().getHero();
-            hero.takeDamage(getDamage());
+            hero.changeHP(-getDamage());
             hero.updateStatus();
         }
 

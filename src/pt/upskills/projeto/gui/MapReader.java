@@ -17,6 +17,7 @@ public class MapReader {
     private List<ImageTile> readMapImages;
     private Position heroPos;
     private HashMap<Integer, Door> listaPortas;
+    private String doorKey;
 
 
     public void readMaps() {
@@ -77,7 +78,7 @@ public class MapReader {
                 // Só verifica se a porta tiver 1 key associada
                 // Só se a porta tiver chave cria uma porta fechada
                 if (porta.length == 6) {
-                    String doorKey = porta[5];
+                    doorKey = porta[5];
                     // Crio portas com posiçoes (0,0) e depois quando percorro o mapa actualizo as posiçoes com o setPosicao
                     Door portaFechada = new DoorClosed(new Position(0, 0), numDoor, destRoom, destDoor, doorKey);
                     listaPortas.put(numDoor, portaFechada);
@@ -156,7 +157,7 @@ public class MapReader {
                     break;
                 case 'k':
                     pos = new Position(i, coordY);
-                    FloorInteractables key = new Key(pos);
+                    FloorInteractables key = new Key(pos, doorKey);
                     readMapImages.add(key);
                     break;
                 case 't':

@@ -1,13 +1,12 @@
 package pt.upskills.projeto.objects;
 
+import pt.upskills.projeto.game.FireBallThread;
+import pt.upskills.projeto.gui.FireTile;
 import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.DoorClosed;
-import pt.upskills.projeto.objects.items.FloorInteractables;
-import pt.upskills.projeto.objects.items.GoodMeat;
-import pt.upskills.projeto.objects.items.Hammer;
-import pt.upskills.projeto.objects.items.Sword;
+import pt.upskills.projeto.objects.items.*;
 import pt.upskills.projeto.objects.mobs.Enemy;
 import pt.upskills.projeto.objects.status.*;
 import pt.upskills.projeto.rogue.utils.Direction;
@@ -24,6 +23,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     private List<ImageTile> statusImages;
     private int score;
     private HashMap<Integer, FloorInteractables> currentItems;
+    private int fireballs;
+    private Integer lastKeycode = (Integer) KeyEvent.VK_UP; // Default fireball direction
+
 
     public Hero(Position position) {
         super(position);
@@ -32,6 +34,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         this.statusImages = new ArrayList<ImageTile>();
         this.currentItems = new HashMap<Integer, FloorInteractables>();
         this.score = 0;
+        this.fireballs = 3;
     }
 
 
@@ -54,23 +57,16 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     }
 
 
-    public void takeDamage(int damage) {
-        this.currentHP -= damage;
+    public void changeHP(int damage) {
+        if (currentHP + damage > maxHP) {
+            this.currentHP = maxHP;
+        } else if (currentHP + damage < 0) {
+            this.currentHP = 0;
+        } else {
+            this.currentHP += damage;
+        }
     }
 
-
-    // Check object at status position (return Null if it's empty), return the object otherwise
-    public ImageTile checkStatusPosition(Position position) {
-        for (ImageTile tile : statusImages) {
-            if (tile.getPosition().equals(position)) {
-                // If for a given position the object found is Not Black, return that object
-                if (!(tile instanceof Black)) {
-                    return tile;
-                }
-            }
-        } // Else if nothing found return null, means it's Black (empty)
-        return null;
-    }
 
     public void addItem(FloorInteractables item) {
         if (!(currentItems.containsKey(1))) {
@@ -86,38 +82,17 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         return (!(currentItems.containsKey(1) && currentItems.containsKey(2) && currentItems.containsKey(3)));
     }
 
-    // Returns first position of items Free on the status bar
-    public Position checkFirstItemFree() {
-        for (int i = 7; i < 10; i++) {
-            Position posItems = new Position(i, 0);
-            if (checkStatusPosition(posItems) == null) {
-                return posItems; //Item Position Free
+    public FloorInteractables getKeyfromSlot(){
+        for (int i=0; i<3; i++){
+            if (currentItems.get(i) instanceof Key){
+                FloorInteractables item = currentItems.get(i);
+                currentItems.remove(i);
+                return item;
             }
-        } // No items free
+        }
         return null;
     }
 
-    //Update game status bar
-    public void initStatus() {
-        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        statusImages.clear();
-        // Create black bars on the background
-        for (int i = 0; i < 10; i++) {
-            Position pos = new Position(i, 0);
-            ImageTile black = new Black(pos);
-            statusImages.add(black);
-        }
-        for (int i = 0; i < 3; i++) {
-            Position pos = new Position(i, 0);
-            ImageTile fire = new Fire(pos);
-            statusImages.add(fire);
-        } // Update HP bars
-        for (int i = 3; i < 7; i++) {
-            Position posLife = new Position(i, 0);
-            ImageTile green = new Green(posLife);
-            statusImages.add(green);
-        }
-    }
 
     //Update game status bar
     public void updateStatus() {
@@ -129,10 +104,11 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             ImageTile black = new Black(pos);
             statusImages.add(black);
         }
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < fireballs; i++) {
             Position pos = new Position(i, 0);
-            ImageTile fire = new Fire(pos);
+            FireTile fire = new Fire(pos);
             statusImages.add(fire);
+
         } // Update HP bars
         int hpLoss = maxHP - currentHP;
         for (int i = 3; i < 7; i++) {
@@ -174,14 +150,16 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         return "Hero";
     }
 
-    public FloorInteractables getStatusPosition(Position pos) {
-        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        for (ImageTile statusImage : statusImages) {
-            if (statusImage.getPosition().equals(pos) && (statusImage instanceof FloorInteractables)) {
-                System.out.println(statusImage.getName());
-                return (FloorInteractables) statusImage;
+    // Check object at status position (return Null if it's empty), return the object otherwise
+    public ImageTile getStatusPosition(Position position) {
+        for (ImageTile tile : statusImages) {
+            if (tile.getPosition().equals(position)) {
+                // If for a given position the object found is Not Black, return that object
+                if (!(tile instanceof Black)) {
+                    return tile;
+                }
             }
-        }
+        } // Else if nothing found return null, means it's Black (empty)
         return null;
     }
 
@@ -216,7 +194,13 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     addItem(floorGoodMeat);
                     currentRoom.removeObject(floorGoodMeat);
                     changeScore(floorGoodMeat.getScore());
-                    currentHP += floorGoodMeat.getLifePoints();
+                }
+            } else if (floorItem instanceof Key) {
+                Key floorKey = (Key) floorItem;
+                if (itemSlotsAvailable()) {
+                    addItem(floorKey);
+                    currentRoom.removeObject(floorKey);
+                    changeScore(floorKey.getScore());
                 }
             }
             updateStatus();
@@ -237,7 +221,6 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             Enemy enemy = (Enemy) getCollisionItem();
             enemy.takeDamage(damage);
             if (enemy.getMobHP() <= 0) {
-                currentRoom.removeObject(enemy);
                 changeScore(enemy.getScore());
             }
         }
@@ -253,12 +236,21 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         } else if (getCollisionItem() instanceof Door) {
             // Only move through a door if the door is open or Doorway
             if (!(getCollisionItem() instanceof DoorClosed)) {
-                System.out.println("A entrar em porta aberta");
                 setPosition(newPos);
                 changeScore(-1);
             } else {
+                DoorClosed doorClosed = (DoorClosed) getCollisionItem();
+                FloorInteractables floorItem = getKeyfromSlot();
+                if (getKeyfromSlot() != null){
+                    Key key = (Key) getKeyfromSlot();
+                    //if (key.getCode() == doorClosed.getKey()){
+                   //     gui.removeStatusImage(key);
+                    //    updateStatus();
+                    //    System.out.println("Closed dor has key");
+                   // }
+                }
                 // Closed door
-                System.out.println("door closed");
+
             }
         }
     }
@@ -279,27 +271,33 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         System.out.println("O Score atual é: " + score);
         updateStatus();
+        System.out.println("Current HP: " + currentHP);
         if (keyCode == KeyEvent.VK_DOWN) {
             // Posicao a mover dada o input
             Position newPos = getPosition().plus(Direction.DOWN.asVector());
             // Testa se a pos é parede antes de mover, só move se não for parede
             moveHero(newPos);
             currentRoom.moveEnemiesRoom();
+            // Used for fireball direction
+            lastKeycode = (Integer) KeyEvent.VK_DOWN;
         }
         if (keyCode == KeyEvent.VK_UP) {
             Position newPos = getPosition().plus(Direction.UP.asVector());
             moveHero(newPos);
             currentRoom.moveEnemiesRoom();
+            lastKeycode = (Integer) KeyEvent.VK_UP;
         }
         if (keyCode == KeyEvent.VK_LEFT) {
             Position newPos = getPosition().plus(Direction.LEFT.asVector());
             moveHero(newPos);
             currentRoom.moveEnemiesRoom();
+            lastKeycode = (Integer) KeyEvent.VK_LEFT;
         }
         if (keyCode == KeyEvent.VK_RIGHT) {
             Position newPos = getPosition().plus(Direction.RIGHT.asVector());
             moveHero(newPos);
             currentRoom.moveEnemiesRoom();
+            lastKeycode = (Integer) KeyEvent.VK_RIGHT;
         }
         if (keyCode == KeyEvent.VK_1) {
             if (currentItems.containsKey(1)) {
@@ -307,11 +305,16 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 currentItems.remove(1);
                 gui.removeStatusImage(item);
                 updateStatus();
-                item.setPosition(getPosition());
                 // Add object to room again when dropped , but must remove and add Hero image so it always appears on top of item
-                gui.removeImage(this);
-                currentRoom.addObject(item);
-                gui.addImage(this);
+                if (item instanceof GoodMeat) {
+                    changeHP(item.getDamage());
+                    updateStatus();
+                } else {
+                    item.setPosition(getPosition());
+                    gui.removeImage(this);
+                    currentRoom.addObject(item);
+                    gui.addImage(this);
+                }
             }
         }
         if (keyCode == KeyEvent.VK_2) {
@@ -320,10 +323,15 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 currentItems.remove(2);
                 gui.removeStatusImage(item);
                 updateStatus();
-                item.setPosition(getPosition());
-                gui.removeImage(this);
-                currentRoom.addObject(item);
-                gui.addImage(this);
+                if (item instanceof GoodMeat) {
+                    changeHP(item.getDamage());
+                    updateStatus();
+                } else {
+                    item.setPosition(getPosition());
+                    gui.removeImage(this);
+                    currentRoom.addObject(item);
+                    gui.addImage(this);
+                }
 
             }
         }
@@ -333,11 +341,40 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 currentItems.remove(3);
                 gui.removeStatusImage(item);
                 updateStatus();
-                item.setPosition(getPosition());
-                gui.removeImage(this);
-                currentRoom.addObject(item);
-                gui.addImage(this);
+                if (item instanceof GoodMeat) {
+                    changeHP(item.getDamage());
+                    updateStatus();
+                } else {
+                    item.setPosition(getPosition());
+                    gui.removeImage(this);
+                    currentRoom.addObject(item);
+                    gui.addImage(this);
+                }
             }
+        }
+        if (keyCode == KeyEvent.VK_SPACE) {
+            if (fireballs > 0) {
+                Position pos = new Position(0, 0);
+                Fire fireball = (Fire) getStatusPosition(pos);
+                fireballs--;
+                fireball.setPosition(getPosition());
+                currentRoom.addObject(fireball);
+                if (lastKeycode == KeyEvent.VK_UP) {
+                    FireBallThread fireBallThread = new FireBallThread(Direction.UP, fireball);
+                    fireBallThread.start();
+                } else if (lastKeycode == KeyEvent.VK_DOWN) {
+                    FireBallThread fireBallThread = new FireBallThread(Direction.DOWN, fireball);
+                    fireBallThread.start();
+                } else if (lastKeycode == KeyEvent.VK_LEFT) {
+                    FireBallThread fireBallThread = new FireBallThread(Direction.LEFT, fireball);
+                    fireBallThread.start();
+                } else if (lastKeycode == KeyEvent.VK_RIGHT) {
+                    FireBallThread fireBallThread = new FireBallThread(Direction.RIGHT, fireball);
+                    fireBallThread.start();
+                }
+                updateStatus();
+            }
+
         }
     }
 }

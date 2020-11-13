@@ -7,10 +7,12 @@ public abstract class FloorInteractables implements ImageTile {
 
     private Position position;
     private int score;
+    private int damage; // Works for weapon damage and also GoodMeat HP
 
-    public FloorInteractables(Position position, int score) {
+    public FloorInteractables(Position position, int score, int damage) {
         this.position = position;
         this.score = score;
+        this.damage = damage;
     }
 
     @Override
@@ -29,5 +31,9 @@ public abstract class FloorInteractables implements ImageTile {
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 }

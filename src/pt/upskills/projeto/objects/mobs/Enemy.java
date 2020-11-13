@@ -31,7 +31,11 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
     public abstract String getName();
 
     public void takeDamage(int damage) {
+        LevelManager levelManager = LevelManager.getInstance();
         this.mobHP -= damage;
+        if (mobHP<= 0){
+            levelManager.getCurrentRoom().removeObject(this);
+        }
     }
 
     public int getMobHP() {
@@ -44,7 +48,6 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
 
     // Generate random 2D vector from array
     public Vector2D getRandomVectorMovement() {
-        System.out.println("Normal random");
         Vector2D[] vectorArray = new Vector2D[4];
         vectorArray[0] = Direction.DOWN.asVector();
         vectorArray[1] = Direction.UP.asVector();
@@ -77,7 +80,6 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         LevelManager levelManager = LevelManager.getInstance();
         Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
         Position enemyPos = this.getPosition();
-        System.out.println(heroPos.calculateDistance(enemyPos));
         return heroPos.calculateDistance(enemyPos);
     }
 
@@ -100,7 +102,7 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         else {
             LevelManager levelManager = LevelManager.getInstance();
             Hero hero = levelManager.getCurrentRoom().getHero();
-            hero.takeDamage(damage);
+            hero.changeHP(-damage);
             hero.updateStatus();
 
         }
