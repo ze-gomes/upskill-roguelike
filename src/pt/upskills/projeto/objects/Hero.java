@@ -83,9 +83,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         return (!(currentItems.containsKey(1) && currentItems.containsKey(2) && currentItems.containsKey(3)));
     }
 
-    public FloorInteractables getKeyfromSlot(){
-        for (int i=0; i<3; i++){
-            if (currentItems.get(i) instanceof Key){
+    public FloorInteractables getKeyfromSlot() {
+        for (int i = 0; i < 3; i++) {
+            if (currentItems.get(i) instanceof Key) {
                 FloorInteractables item = currentItems.get(i);
                 currentItems.remove(i);
                 return item;
@@ -246,10 +246,10 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             } else {
                 DoorClosed doorClosed = (DoorClosed) getCollisionItem();
                 FloorInteractables floorItem = getKeyfromSlot();
-                if (floorItem != null){ // Interacting with closed door
+                if (floorItem != null) { // Interacting with closed door
                     Key key = (Key) floorItem;
-                    if (key.getCode().equals(doorClosed.getKey())){
-                        System.out.println("Opening door " +  doorClosed.getNumDoor() + " with " + key.getCode() );
+                    if (key.getCode().equals(doorClosed.getKey())) {
+                        System.out.println("Opening door " + doorClosed.getNumDoor() + " with " + key.getCode());
                         gui.removeStatusImage(key);
                         updateStatus();
                         // Para o heroi nao ficar invisivel (debaixo da porta) por esta ter sido adicionada por cima à tiles
@@ -275,115 +275,121 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     @Override
     public void update(Observable o, Object arg) {
         LevelManager levelManager = LevelManager.getInstance();
-        Room currentRoom = levelManager.getCurrentRoom();
-        Integer keyCode = (Integer) arg;
-        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        //System.out.println("O Score atual é: " + score);
-        updateStatus();
-        //System.out.println("Current HP: " + currentHP);
-        if (keyCode == KeyEvent.VK_DOWN) {
-            // Posicao a mover dada o input
-            Position newPos = getPosition().plus(Direction.DOWN.asVector());
-            // Testa se a pos é parede antes de mover, só move se não for parede
-            moveHero(newPos);
-            currentRoom.moveEnemiesRoom();
-            // Used for fireball direction
-            lastKeycode = (Integer) KeyEvent.VK_DOWN;
-        }
-        if (keyCode == KeyEvent.VK_UP) {
-            Position newPos = getPosition().plus(Direction.UP.asVector());
-            moveHero(newPos);
-            currentRoom.moveEnemiesRoom();
-            lastKeycode = (Integer) KeyEvent.VK_UP;
-        }
-        if (keyCode == KeyEvent.VK_LEFT) {
-            Position newPos = getPosition().plus(Direction.LEFT.asVector());
-            moveHero(newPos);
-            currentRoom.moveEnemiesRoom();
-            lastKeycode = (Integer) KeyEvent.VK_LEFT;
-        }
-        if (keyCode == KeyEvent.VK_RIGHT) {
-            Position newPos = getPosition().plus(Direction.RIGHT.asVector());
-            moveHero(newPos);
-            currentRoom.moveEnemiesRoom();
-            lastKeycode = (Integer) KeyEvent.VK_RIGHT;
-        }
-        if (keyCode == KeyEvent.VK_1) {
-            if (currentItems.containsKey(1)) {
-                FloorInteractables item = currentItems.get(1);
-                currentItems.remove(1);
-                gui.removeStatusImage(item);
-                updateStatus();
-                // Add object to room again when dropped , but must remove and add Hero image so it always appears on top of item
-                if (item instanceof GoodMeat) {
-                    changeHP(item.getDamage());
+        if (!levelManager.getGameOver()) {
+            Room currentRoom = levelManager.getCurrentRoom();
+            Integer keyCode = (Integer) arg;
+            ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+            //System.out.println("O Score atual é: " + score);
+            updateStatus();
+            //System.out.println("Current HP: " + currentHP);
+            ///Game Over
+            if (currentHP == 0) {
+                levelManager.gameOver(getScore());
+            }
+            if (keyCode == KeyEvent.VK_DOWN) {
+                // Posicao a mover dada o input
+                Position newPos = getPosition().plus(Direction.DOWN.asVector());
+                // Testa se a pos é parede antes de mover, só move se não for parede
+                moveHero(newPos);
+                currentRoom.moveEnemiesRoom();
+                // Used for fireball direction
+                lastKeycode = (Integer) KeyEvent.VK_DOWN;
+            }
+            if (keyCode == KeyEvent.VK_UP) {
+                Position newPos = getPosition().plus(Direction.UP.asVector());
+                moveHero(newPos);
+                currentRoom.moveEnemiesRoom();
+                lastKeycode = (Integer) KeyEvent.VK_UP;
+            }
+            if (keyCode == KeyEvent.VK_LEFT) {
+                Position newPos = getPosition().plus(Direction.LEFT.asVector());
+                moveHero(newPos);
+                currentRoom.moveEnemiesRoom();
+                lastKeycode = (Integer) KeyEvent.VK_LEFT;
+            }
+            if (keyCode == KeyEvent.VK_RIGHT) {
+                Position newPos = getPosition().plus(Direction.RIGHT.asVector());
+                moveHero(newPos);
+                currentRoom.moveEnemiesRoom();
+                lastKeycode = (Integer) KeyEvent.VK_RIGHT;
+            }
+            if (keyCode == KeyEvent.VK_1) {
+                if (currentItems.containsKey(1)) {
+                    FloorInteractables item = currentItems.get(1);
+                    currentItems.remove(1);
+                    gui.removeStatusImage(item);
                     updateStatus();
-                } else {
-                    item.setPosition(getPosition());
-                    gui.removeImage(this);
-                    currentRoom.addObject(item);
-                    gui.addImage(this);
+                    // Add object to room again when dropped , but must remove and add Hero image so it always appears on top of item
+                    if (item instanceof GoodMeat) {
+                        changeHP(item.getDamage());
+                        updateStatus();
+                    } else {
+                        item.setPosition(getPosition());
+                        gui.removeImage(this);
+                        currentRoom.addObject(item);
+                        gui.addImage(this);
+                    }
                 }
             }
-        }
-        if (keyCode == KeyEvent.VK_2) {
-            if (currentItems.containsKey(2)) {
-                FloorInteractables item = currentItems.get(2);
-                currentItems.remove(2);
-                gui.removeStatusImage(item);
-                updateStatus();
-                if (item instanceof GoodMeat) {
-                    changeHP(item.getDamage());
+            if (keyCode == KeyEvent.VK_2) {
+                if (currentItems.containsKey(2)) {
+                    FloorInteractables item = currentItems.get(2);
+                    currentItems.remove(2);
+                    gui.removeStatusImage(item);
                     updateStatus();
-                } else {
-                    item.setPosition(getPosition());
-                    gui.removeImage(this);
-                    currentRoom.addObject(item);
-                    gui.addImage(this);
+                    if (item instanceof GoodMeat) {
+                        changeHP(item.getDamage());
+                        updateStatus();
+                    } else {
+                        item.setPosition(getPosition());
+                        gui.removeImage(this);
+                        currentRoom.addObject(item);
+                        gui.addImage(this);
+                    }
+
+                }
+            }
+            if (keyCode == KeyEvent.VK_3) {
+                if (currentItems.containsKey(3)) {
+                    FloorInteractables item = currentItems.get(3);
+                    currentItems.remove(3);
+                    gui.removeStatusImage(item);
+                    updateStatus();
+                    if (item instanceof GoodMeat) {
+                        changeHP(item.getDamage());
+                        updateStatus();
+                    } else {
+                        item.setPosition(getPosition());
+                        gui.removeImage(this);
+                        currentRoom.addObject(item);
+                        gui.addImage(this);
+                    }
+                }
+            }
+            if (keyCode == KeyEvent.VK_SPACE) {
+                if (fireballs > 0) {
+                    Position pos = new Position(0, 0);
+                    Fire fireball = (Fire) getStatusPosition(pos);
+                    fireballs--;
+                    fireball.setPosition(getPosition());
+                    gui.addImage(fireball);
+                    if (lastKeycode == KeyEvent.VK_UP) {
+                        FireBallThread fireBallThread = new FireBallThread(Direction.UP, fireball);
+                        fireBallThread.start();
+                    } else if (lastKeycode == KeyEvent.VK_DOWN) {
+                        FireBallThread fireBallThread = new FireBallThread(Direction.DOWN, fireball);
+                        fireBallThread.start();
+                    } else if (lastKeycode == KeyEvent.VK_LEFT) {
+                        FireBallThread fireBallThread = new FireBallThread(Direction.LEFT, fireball);
+                        fireBallThread.start();
+                    } else if (lastKeycode == KeyEvent.VK_RIGHT) {
+                        FireBallThread fireBallThread = new FireBallThread(Direction.RIGHT, fireball);
+                        fireBallThread.start();
+                    }
+                    updateStatus();
                 }
 
             }
-        }
-        if (keyCode == KeyEvent.VK_3) {
-            if (currentItems.containsKey(3)) {
-                FloorInteractables item = currentItems.get(3);
-                currentItems.remove(3);
-                gui.removeStatusImage(item);
-                updateStatus();
-                if (item instanceof GoodMeat) {
-                    changeHP(item.getDamage());
-                    updateStatus();
-                } else {
-                    item.setPosition(getPosition());
-                    gui.removeImage(this);
-                    currentRoom.addObject(item);
-                    gui.addImage(this);
-                }
-            }
-        }
-        if (keyCode == KeyEvent.VK_SPACE) {
-            if (fireballs > 0) {
-                Position pos = new Position(0, 0);
-                Fire fireball = (Fire) getStatusPosition(pos);
-                fireballs--;
-                fireball.setPosition(getPosition());
-                gui.addImage(fireball);
-                if (lastKeycode == KeyEvent.VK_UP) {
-                    FireBallThread fireBallThread = new FireBallThread(Direction.UP, fireball);
-                    fireBallThread.start();
-                } else if (lastKeycode == KeyEvent.VK_DOWN) {
-                    FireBallThread fireBallThread = new FireBallThread(Direction.DOWN, fireball);
-                    fireBallThread.start();
-                } else if (lastKeycode == KeyEvent.VK_LEFT) {
-                    FireBallThread fireBallThread = new FireBallThread(Direction.LEFT, fireball);
-                    fireBallThread.start();
-                } else if (lastKeycode == KeyEvent.VK_RIGHT) {
-                    FireBallThread fireBallThread = new FireBallThread(Direction.RIGHT, fireball);
-                    fireBallThread.start();
-                }
-                updateStatus();
-            }
-
         }
     }
 }

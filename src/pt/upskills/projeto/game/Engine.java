@@ -29,9 +29,10 @@ public class Engine {
         hero.updateStatus();
         gui.newImages(tiles);
         gui.go();
-        while (true){
+        while (!levelManager.getGameOver()){
             gui.update();
         }
+        gui.update();
     }
 
     public static void main(String[] args){
