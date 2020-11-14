@@ -1,5 +1,6 @@
 package pt.upskills.projeto.gui;
 
+import pt.upskills.projeto.game.LevelManager;
 import pt.upskills.projeto.objects.*;
 import pt.upskills.projeto.objects.environment.*;
 import pt.upskills.projeto.objects.items.*;
@@ -14,10 +15,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MapReader {
-    private List<ImageTile> readMapImages;
+    private List<ImageTile> readMapObjects;
     private Position heroPos;
     private HashMap<Integer, Door> listaPortas;
     private String doorKey;
+    private List<ImageTile> readMapImages;
 
 
     public void readMaps() {
@@ -31,6 +33,7 @@ public class MapReader {
             for (File f : fileArray) {
                 // Para cada ficheiro cria e armazena uma lista de objectos ImageTile e uma Lista de Portas
                 readMapImages = new ArrayList<ImageTile>();
+                readMapObjects = new ArrayList<ImageTile>();
                 listaPortas = new HashMap<Integer, Door>();
                 Scanner fileScanner = new Scanner(f);
                 addFloor();
@@ -48,6 +51,7 @@ public class MapReader {
                     }
                 }
                 // Create room for each file and add to levelManager singleton
+                readMapImages.addAll(readMapObjects);
                 levelManager.addGameLevel(f.getName(), new Room(f.getName(), readMapImages, listaPortas));
                 // Fecha o fileScanner
                 fileScanner.close();
@@ -115,7 +119,7 @@ public class MapReader {
                 case 'W':
                     pos = new Position(i, coordY);
                     ImageTile w = new Wall(pos);
-                    readMapImages.add(w);
+                    readMapObjects.add(w);
                     break;
                 case 'H':
                     heroPos = new Position(i, coordY);
@@ -123,32 +127,32 @@ public class MapReader {
                 case 'S':
                     pos = new Position(i, coordY);
                     Enemy skeleton = new Skeleton(pos);
-                    readMapImages.add(skeleton);
+                    readMapObjects.add(skeleton);
                     break;
                 case 'G':
                     pos = new Position(i, coordY);
                     Enemy badGuy = new BadGuy(pos);
-                    readMapImages.add(badGuy);
+                    readMapObjects.add(badGuy);
                     break;
                 case 'B':
                     pos = new Position(i, coordY);
                     Enemy bat = new Bat(pos);
-                    readMapImages.add(bat);
+                    readMapObjects.add(bat);
                     break;
                 case 'T':
                     pos = new Position(i, coordY);
                     Enemy thief = new Thief(pos);
-                    readMapImages.add(thief);
+                    readMapObjects.add(thief);
                     break;
                 case 's':
                     pos = new Position(i, coordY);
                     FloorInteractables sword = new Sword(pos);
-                    readMapImages.add(sword);
+                    readMapObjects.add(sword);
                     break;
                 case 'h':
                     pos = new Position(i, coordY);
                     FloorInteractables hammer = new Hammer(pos);
-                    readMapImages.add(hammer);
+                    readMapObjects.add(hammer);
                     break;
                 case 'g':
                     pos = new Position(i, coordY);
@@ -158,35 +162,35 @@ public class MapReader {
                 case 'k':
                     pos = new Position(i, coordY);
                     FloorInteractables key = new Key(pos, doorKey);
-                    readMapImages.add(key);
+                    readMapObjects.add(key);
                     break;
                 case 't':
                     pos = new Position(i, coordY);
                     FloorInteractables trap = new Trap(pos);
-                    readMapImages.add(trap);
+                    readMapObjects.add(trap);
                     break;
                 case 'm':
                     pos = new Position(i, coordY);
                     FloorInteractables goodMeat = new GoodMeat(pos);
-                    readMapImages.add(goodMeat);
+                    readMapObjects.add(goodMeat);
                     break;
                 case '0':
                     pos = new Position(i, coordY);
                     Door porta0 = listaPortas.get(0);
                     porta0.setPosition(pos);
-                    readMapImages.add(porta0);
+                    readMapObjects.add(porta0);
                     break;
                 case '1':
                     pos = new Position(i, coordY);
                     Door porta1 = listaPortas.get(1);
                     porta1.setPosition(pos);
-                    readMapImages.add(porta1);
+                    readMapObjects.add(porta1);
                     break;
                 case '2':
                     pos = new Position(i, coordY);
                     Door porta2 = listaPortas.get(2);
                     porta2.setPosition(pos);
-                    readMapImages.add(porta2);
+                    readMapObjects.add(porta2);
                     break;
                 default:
                     break;

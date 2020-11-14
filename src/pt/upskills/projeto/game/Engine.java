@@ -4,8 +4,6 @@ import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.gui.MapReader;
 import pt.upskills.projeto.objects.Hero;
-import pt.upskills.projeto.objects.LevelManager;
-import pt.upskills.projeto.objects.mobs.Enemy;
 
 import java.util.List;
 
@@ -25,6 +23,7 @@ public class Engine {
         List<ImageTile> tiles = levelManager.getCurrentRoom().getRoomImages();
         Hero hero = new Hero(mapReader.getStartHeroPos());
         levelManager.getCurrentRoom().setHero(hero);
+        levelManager.setHeroInstance(hero);
         tiles.add(hero);
         gui.addObserver(hero);
         hero.updateStatus();

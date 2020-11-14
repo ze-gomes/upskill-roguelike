@@ -3,8 +3,11 @@ package pt.upskills.projeto.objects;
 import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.environment.Door;
+import pt.upskills.projeto.objects.environment.DoorOpen;
 import pt.upskills.projeto.objects.environment.Floor;
+import pt.upskills.projeto.objects.environment.Grass;
 import pt.upskills.projeto.objects.mobs.Enemy;
+import pt.upskills.projeto.objects.status.Fire;
 import pt.upskills.projeto.rogue.utils.Position;
 
 import java.util.HashMap;
@@ -54,8 +57,8 @@ public class Room {
     public ImageTile checkPosition(Position position) {
         for (ImageTile tile : roomImages) {
             if (tile.getPosition().equals(position)) {
-                // If for a given position the object found is Not floor, return that object
-                if (!(tile instanceof Floor)) {
+                // If for a given position the object found is Not floor or Grass, return that object
+                if (!(tile instanceof Floor) && !(tile instanceof Grass)) {
                     return tile;
                 }
             }
@@ -81,6 +84,17 @@ public class Room {
         return null;
     }
 
+    public void openDoorWithKey(Door doorClosed){
+        int numPortaFechada = doorClosed.getNumDoor();
+        int destDoor = doorClosed.getDestDoor();
+        String destRoom = doorClosed.getDestRoom();
+        Position doorPos = doorClosed.getPosition();
+        Door portaAberta = new DoorOpen(doorPos, numPortaFechada, destRoom, destDoor);
+        removeObject(doorClosed);
+        addObject(portaAberta);
+        addDoor(portaAberta, numPortaFechada);
+    }
+
     // Mexe todos os enemigos da sala
     public void moveEnemiesRoom() {
         for (ImageTile image : roomImages) {
@@ -102,4 +116,14 @@ public class Room {
         gui.addImage(tile);
         roomImages.add(tile);
     }
+
+    // For some reason fireballs are appearing again when you pass a level and go back
+    // to the level where you launched them, this should fixit
+//    removeFireTiles(){
+//        for (ImageTile image : roomImages) {
+//            if (image instanceof Fire) {
+//                ((Enemy) image).movement();
+//            }
+//        }
+//    }
 }

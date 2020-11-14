@@ -1,5 +1,6 @@
 package pt.upskills.projeto.objects;
 
+import pt.upskills.projeto.game.LevelManager;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.Wall;

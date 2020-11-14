@@ -3,7 +3,7 @@ package pt.upskills.projeto.objects.mobs;
 import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.Hero;
-import pt.upskills.projeto.objects.LevelManager;
+import pt.upskills.projeto.game.LevelManager;
 import pt.upskills.projeto.rogue.utils.Position;
 import pt.upskills.projeto.rogue.utils.Vector2D;
 
@@ -60,7 +60,7 @@ public class Thief extends Enemy implements ImageTile {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         // Se nao colidiu com nada na nova posiçao e esta dentro dos map bounds,
         // entao move para a nova posiçao
-        if (distanceToHero() > 5.0) {
+        if (distanceToHero() > 4.5) {
             if (!checkCollision(newRandomPos) && (checkInsideMapBounds(newRandomPos))) {
                 this.setPosition(newRandomPos);
             }

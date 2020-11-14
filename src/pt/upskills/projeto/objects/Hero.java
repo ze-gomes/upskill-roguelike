@@ -1,6 +1,7 @@
 package pt.upskills.projeto.objects;
 
 import pt.upskills.projeto.game.FireBallThread;
+import pt.upskills.projeto.game.LevelManager;
 import pt.upskills.projeto.gui.FireTile;
 import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
@@ -150,6 +151,10 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         return "Hero";
     }
 
+    public int getScore() {
+        return score;
+    }
+
     // Check object at status position (return Null if it's empty), return the object otherwise
     public ImageTile getStatusPosition(Position position) {
         for (ImageTile tile : statusImages) {
@@ -241,15 +246,19 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             } else {
                 DoorClosed doorClosed = (DoorClosed) getCollisionItem();
                 FloorInteractables floorItem = getKeyfromSlot();
-                if (getKeyfromSlot() != null){
-                    Key key = (Key) getKeyfromSlot();
-                    //if (key.getCode() == doorClosed.getKey()){
-                   //     gui.removeStatusImage(key);
-                    //    updateStatus();
-                    //    System.out.println("Closed dor has key");
-                   // }
+                if (floorItem != null){ // Interacting with closed door
+                    Key key = (Key) floorItem;
+                    if (key.getCode().equals(doorClosed.getKey())){
+                        System.out.println("Opening door " +  doorClosed.getNumDoor() + " with " + key.getCode() );
+                        gui.removeStatusImage(key);
+                        updateStatus();
+                        // Para o heroi nao ficar invisivel (debaixo da porta) por esta ter sido adicionada por cima à tiles
+                        gui.removeImage(this);
+                        currentRoom.openDoorWithKey(doorClosed);
+                        gui.addImage(this);
+                    }
                 }
-                // Closed door
+
 
             }
         }
@@ -269,9 +278,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         Room currentRoom = levelManager.getCurrentRoom();
         Integer keyCode = (Integer) arg;
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        System.out.println("O Score atual é: " + score);
+        //System.out.println("O Score atual é: " + score);
         updateStatus();
-        System.out.println("Current HP: " + currentHP);
+        //System.out.println("Current HP: " + currentHP);
         if (keyCode == KeyEvent.VK_DOWN) {
             // Posicao a mover dada o input
             Position newPos = getPosition().plus(Direction.DOWN.asVector());
@@ -358,7 +367,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 Fire fireball = (Fire) getStatusPosition(pos);
                 fireballs--;
                 fireball.setPosition(getPosition());
-                currentRoom.addObject(fireball);
+                gui.addImage(fireball);
                 if (lastKeycode == KeyEvent.VK_UP) {
                     FireBallThread fireBallThread = new FireBallThread(Direction.UP, fireball);
                     fireBallThread.start();

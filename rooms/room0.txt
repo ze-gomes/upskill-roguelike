@@ -1,5 +1,5 @@
 #
-# 0 D room2.txt 1 key
+# 0 D room2.txt 1 key23
 #
 WWWW0WWWWW
 Wggg ggggW

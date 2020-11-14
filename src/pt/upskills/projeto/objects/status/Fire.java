@@ -3,7 +3,7 @@ package pt.upskills.projeto.objects.status;
 import pt.upskills.projeto.gui.FireTile;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.Hero;
-import pt.upskills.projeto.objects.LevelManager;
+import pt.upskills.projeto.game.LevelManager;
 import pt.upskills.projeto.objects.Room;
 import pt.upskills.projeto.objects.environment.Door;
 import pt.upskills.projeto.objects.environment.Wall;

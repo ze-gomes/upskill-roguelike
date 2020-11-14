@@ -4,15 +4,11 @@ import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.objects.GameCharacter;
 import pt.upskills.projeto.objects.Hero;
-import pt.upskills.projeto.objects.LevelManager;
-import pt.upskills.projeto.objects.environment.Door;
-import pt.upskills.projeto.objects.environment.DoorClosed;
-import pt.upskills.projeto.objects.environment.Wall;
+import pt.upskills.projeto.game.LevelManager;
 import pt.upskills.projeto.rogue.utils.Direction;
 import pt.upskills.projeto.rogue.utils.Position;
 import pt.upskills.projeto.rogue.utils.Vector2D;
 
-import java.awt.geom.Point2D;
 import java.util.Random;
 
 public abstract class Enemy extends GameCharacter implements ImageTile {
