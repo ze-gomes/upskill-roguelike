@@ -30,16 +30,13 @@ public class Fire implements FireTile {
     }
 
 
-    public ImageTile getCollisionItem() {
-        return collisionObject;
-    }
-
 
     @Override
     public boolean validateImpact() {
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
         ImageTile foundImage = currentRoom.checkPosition(getPosition());
+        // If it collides with a enemy, damage him.
         if (foundImage instanceof Enemy) {
             collisionObject = foundImage;
             Enemy enemy = (Enemy) collisionObject;
@@ -54,7 +51,7 @@ public class Fire implements FireTile {
         } else if (foundImage instanceof Wall) {
             collisionObject = foundImage;
             return false;
-            // null means it's the Floor
+            // null means it's the Floor or Grass
         } else if (foundImage == null) {
             return true;
         }

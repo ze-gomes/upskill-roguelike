@@ -17,29 +17,37 @@ import java.awt.event.KeyEvent;
 import java.util.*;
 
 public class Hero extends GameCharacter implements ImageTile, Observer {
-    private Position position;
     private int currentHP; // range 0-8
     private int maxHP = 8;
+    private int fireballs = 3;
     private int damage;
-    private List<ImageTile> statusImages;
+    private List<ImageTile> statusImages; // Status Images
     private int score;
-    private HashMap<Integer, FloorInteractables> currentItems;
-    private int fireballs;
-    private Integer lastKeycode = (Integer) KeyEvent.VK_UP; // Default fireball direction
+    private HashMap<Integer, FloorInteractables> currentItems; // Stores Items in the item slot
+    private Integer lastKeycode = (Integer) KeyEvent.VK_UP; // Saves Default fireball direction
 
 
     public Hero(Position position) {
         super(position);
         this.currentHP = maxHP;
-        this.damage = 1;
+        this.damage = 1; // start with 1 damage
         this.statusImages = new ArrayList<ImageTile>();
+        this.currentItems = new HashMap<Integer, FloorInteractables>();
+        this.score = 0;
+    }
+
+
+    // Test function for game restart
+    public void resetState(){
+        this.currentHP = maxHP;
+        this.damage = 1; // start with 1 damage
         this.currentItems = new HashMap<Integer, FloorInteractables>();
         this.score = 0;
         this.fireballs = 3;
     }
 
 
-    // Prevents score from dropping below 0
+    // Changes hero score, prevents score from dropping below 0
     public void changeScore(int score) {
         if (this.score + score < 0) {
             this.score = 0;
@@ -48,7 +56,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         }
     }
 
-    // Prevents damage from dropping below 1
+    // Changes hero damage, prevents damage from dropping below 1
     public void changeDamage(int damage) {
         if (this.damage + damage < 0) {
             this.damage = 1;
@@ -58,6 +66,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     }
 
 
+    // Changes hero HP, prevents HP from going over the MaxHP or below 0
     public void changeHP(int damage) {
         if (currentHP + damage > maxHP) {
             this.currentHP = maxHP;
@@ -69,7 +78,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     }
 
 
+    // Add item picked up to a HashMap<Integer, FloorInteractables> with keys 1-3 which represent the respective item slots
     public void addItem(FloorInteractables item) {
+        // Adds item to the first slot available (checked with containsKey() )
         if (!(currentItems.containsKey(1))) {
             currentItems.put(1, item);
         } else if (!(currentItems.containsKey(2))) {
@@ -79,10 +90,13 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         }
     }
 
+    // Check if there are item slots available, return TRUE if there are
     public boolean itemSlotsAvailable() {
         return (!(currentItems.containsKey(1) && currentItems.containsKey(2) && currentItems.containsKey(3)));
     }
 
+
+    // Get Key from item slot
     public FloorInteractables getKeyfromSlot() {
         for (int i = 1; i <= 3; i++) {
             if (currentItems.get(i) instanceof Key) {
@@ -105,11 +119,11 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             ImageTile black = new Black(pos);
             statusImages.add(black);
         }
+        // Create fireballs
         for (int i = 0; i < fireballs; i++) {
             Position pos = new Position(i, 0);
             FireTile fire = new Fire(pos);
             statusImages.add(fire);
-
         } // Update HP bars
         int hpLoss = maxHP - currentHP;
         for (int i = 3; i < 7; i++) {
@@ -132,6 +146,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 statusImages.add(green);
             }
         }
+        // Display items in item slots from the hashmap of FloorInteractables
         int u = 1;
         for (int i = 7; i < 10; i++) {
             if (currentItems.containsKey(u)) {
@@ -155,6 +170,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         return score;
     }
 
+
     // Check object at status position (return Null if it's empty), return the object otherwise
     public ImageTile getStatusPosition(Position position) {
         for (ImageTile tile : statusImages) {
@@ -164,24 +180,28 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     return tile;
                 }
             }
-        } // Else if nothing found return null, means it's Black (empty)
+        } // if nothing found return null, means it's Black (empty)
         return null;
     }
 
-    // Check if there are any pickups or traps on the floor
+    // Check if there are any item pickups or traps on the floor
     // (no collision but requires an action when you go over it)
     public void checkIfGroundAction(Position newPos) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
         ImageTile floorItem = currentRoom.checkPosition(newPos);
-        // Se o chao é sword e nao tem espada ainda
+        // If the floorItem is a sword
         if (floorItem instanceof FloorInteractables) {
             if (floorItem instanceof Sword) {
                 Sword floorSword = (Sword) floorItem;
+                // Only pickup item if there are slots available
                 if (itemSlotsAvailable()) {
+                    // Remove item from the room and into the status bar
+                    // Object remains the same
                     addItem(floorSword);
                     currentRoom.removeObject(floorSword);
+                    // Apply item effects
                     changeScore(floorSword.getScore());
                     changeDamage(floorSword.getDamage());
                 }
@@ -201,6 +221,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     changeScore(floorAxe.getScore());
                     changeDamage(floorAxe.getDamage());
                 }
+                // HP items (GoodMeat and Potion) are stored in the status bar item slots and consumed when "dropped"
             } else if (floorItem instanceof GoodMeat) {
                 GoodMeat floorGoodMeat = (GoodMeat) floorItem;
                 if (itemSlotsAvailable()) {
@@ -215,6 +236,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     currentRoom.removeObject(floorPotion);
                     changeScore(floorPotion.getScore());
                 }
+                // Trap damages the player and decreases score
             } else if (floorItem instanceof Trap) {
                 Trap floorTrap = (Trap) floorItem;
                 changeScore(floorTrap.getScore());
@@ -231,18 +253,20 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         }
     }
 
+
+    // Manages movement of the hero given a new position
     public void moveHero(Position newPos) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
-        // Move if there is no collision and is inside bounds
+        // Move if there is no collision and is inside map bounds
         if (!checkCollision(newPos) && checkInsideMapBounds(newPos)) {
             // Check if there are items on the floor to pickup
             checkIfGroundAction(newPos);
             // Decrease score on walking
             changeScore(-1);
             setPosition(newPos);
-            // If collision is Enemy, do damage and check if enemy dies
+            // If collision is Enemy, do damage and check if enemy dies, increase score in that case
         } else if (getCollisionItem() instanceof Enemy) {
             Enemy enemy = (Enemy) getCollisionItem();
             enemy.takeDamage(damage);
@@ -250,32 +274,38 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 changeScore(enemy.getScore());
             }
         }
-        // Se a nova posicao é fora do mapa, e a posicao actual é uma porta
-        // quer dizer que estamos a entrar numa porta para mudar de nivel
+        // If new position is not inside map bounds, and the current position is a door
+        // means we are entering a door to change level
         if (!checkInsideMapBounds(newPos)) {
             if (currentRoom.checkDoorPos(getPosition()) != null) {
                 // Convert ImageTile from getCollisionItem() to Door
                 Door door = (Door) currentRoom.checkDoorPos(getPosition());
-                System.out.println("Changing to room " + door.getDestRoom() + " porta " + door.getDestDoor());
+                System.out.println("Changing to room " + door.getDestRoom() + " Door " + door.getDestDoor());
+                // Changes the level (loads up the new room and all the necessary assets)
                 levelManager.changeLevel(this, door);
             }
+
         } else if (getCollisionItem() instanceof Door) {
-            // Only move through a door if the door is open or Doorway
+            // Only move to a door position if the door is open or a Doorway
             if (!(getCollisionItem() instanceof DoorClosed)) {
                 setPosition(newPos);
                 changeScore(-1);
-            } else {
+            } else { // Otherwise it's a closed door
                 DoorClosed doorClosed = (DoorClosed) getCollisionItem();
+                // Interacting with closed door
+                // Gets a key from item slot and check if it matches the door code with the key code.
                 FloorInteractables floorItem = getKeyfromSlot();
-                if (floorItem != null) { // Interacting with closed door
+                if (floorItem != null) {
                     Key key = (Key) floorItem;
                     if (key.getCode().equals(doorClosed.getKey())) {
+                        // If it's the right key, use key and Opens door with key
                         System.out.println("Opening door " + doorClosed.getNumDoor() + " with " + key.getCode() + " to " + doorClosed.getDestRoom());
                         gui.removeStatusImage(key);
                         changeScore(50);
                         updateStatus();
-                        // Para o heroi nao ficar invisivel (debaixo da porta) por esta ter sido adicionada por cima à tiles
+                        // To prevent the hero becoming invisible (blocked by the new door tile) we have to do this
                         gui.removeImage(this);
+                        // Creates a similar Door object (same attributes except key) but DoorOpen instead of DoorClosed
                         currentRoom.openDoorWithKey(doorClosed);
                         gui.addImage(this);
                     }
@@ -301,20 +331,19 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             Room currentRoom = levelManager.getCurrentRoom();
             Integer keyCode = (Integer) arg;
             ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-            //System.out.println("O Score atual é: " + score);
             updateStatus();
-            //System.out.println("Current HP: " + currentHP);
-            ///Game Over
+            /// Check if Hero HP goes to 0 to trigger the end of the game
             if (currentHP == 0) {
                 levelManager.gameOver(getScore());
             }
             if (keyCode == KeyEvent.VK_DOWN) {
-                // Posicao a mover dada o input
                 Position newPos = getPosition().plus(Direction.DOWN.asVector());
-                // Testa se a pos é parede antes de mover, só move se não for parede
+                // Handles all the tests and collisions for the required position
                 moveHero(newPos);
+                // Moves all the enemies on the room when here moves as well
                 currentRoom.moveEnemiesRoom();
-                // Used for fireball direction
+                // Used for fireball direction, fireball is sent always in the last direction received
+                // It's defaulted to VK_UP at the start if no direction has been received
                 lastKeycode = (Integer) KeyEvent.VK_DOWN;
             }
             if (keyCode == KeyEvent.VK_UP) {
@@ -336,22 +365,28 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 lastKeycode = (Integer) KeyEvent.VK_RIGHT;
             }
             if (keyCode == KeyEvent.VK_1) {
+                // Check if respective item slot has any item (otherwise do nothing)
                 if (currentItems.containsKey(1)) {
                     FloorInteractables item = currentItems.get(1);
                     currentItems.remove(1);
                     gui.removeStatusImage(item);
                     updateStatus();
-                    // Add object to room again when dropped , but must remove and add Hero image so it always appears on top of item
+                    // If the item is a healing item (GoodMeat or Potion), the item is consumed when the slot is selected
                     if (item instanceof GoodMeat) {
                         changeHP(item.getDamage());
                         updateStatus();
                     } else if (item instanceof Potion) {
+                        // Potion heals and adds damage at the same time
                         changeHP(item.getDamage());
+                        changeDamage(item.getDamage()/4);
                         updateStatus();
-                    } else {
+                    } else { // If it's not a healing item, it's a weapon,
+                        // this means we have to take back the added damage and score
+                        // This prevents the hero from "farming" score and damage
                         changeDamage(-item.getDamage());
                         changeScore(-item.getScore());
                         item.setPosition(getPosition());
+                        // Add object to room again when dropped , but must remove and add Hero image so it always appears on top of item
                         gui.removeImage(this);
                         currentRoom.addObject(item);
                         gui.addImage(this);
@@ -369,6 +404,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                         updateStatus();
                     } else if (item instanceof Potion) {
                         changeHP(item.getDamage());
+                        changeDamage(item.getDamage()/4);
                         updateStatus();
                     } else {
                         changeDamage(-item.getDamage());
@@ -391,7 +427,6 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                         changeHP(item.getDamage());
                         updateStatus();
                     } else if (item instanceof Potion) {
-                        // Adds life and more damage
                         changeHP(item.getDamage());
                         changeDamage(item.getDamage()/4);
                         updateStatus();
@@ -405,9 +440,11 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     }
                 }
             }
+            // Throws fireballs
             if (keyCode == KeyEvent.VK_SPACE) {
                 if (fireballs > 0) {
                     Position pos = new Position(0, 0);
+                    // Gets fireball objects from status bar
                     Fire fireball = (Fire) getStatusPosition(pos);
                     fireballs--;
                     fireball.setPosition(getPosition());

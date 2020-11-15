@@ -14,7 +14,7 @@ public class Engine {
         // Read all maps to LevelManager
         MapReader mapReader  = new MapReader();
         mapReader.readMaps();
-        // Create Level Manager
+        // Get Level Manager Singleton
         LevelManager levelManager = LevelManager.getInstance();
         // Set start level
         levelManager.setCurrentRoom("room0.txt");
@@ -31,11 +31,7 @@ public class Engine {
         gui.go();
         while (true){
             gui.update();
-            if (levelManager.getGameOver()) {
-                break;
-            }
         }
-
     }
 
     public static void main(String[] args){

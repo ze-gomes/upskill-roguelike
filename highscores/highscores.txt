@@ -1,8 +1,8 @@
 ------------------------------------------
  Top 5 High Scores for upSkill roguelike:
 ------------------------------------------
-1. JOSE-GOMES - 986
-2. JOSE-GOMES - 961
+1. JOSE-GOMES - 1069
+2. JOSE-GOMES - 278
 3. JOSE-GOMES - 0
 4. JOSE-GOMES - 0
 5. JOSE-GOMES - 0

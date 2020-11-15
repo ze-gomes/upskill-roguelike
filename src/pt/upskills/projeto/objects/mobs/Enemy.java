@@ -11,8 +11,9 @@ import pt.upskills.projeto.rogue.utils.Vector2D;
 
 import java.util.Random;
 
+// This class is the super class of all the enemy characters
 public abstract class Enemy extends GameCharacter implements ImageTile {
-    private Random random = new Random();
+    private Random random = new Random(); // To help generate random movements
     private int damage;
     private int mobHP;
     private int score;
@@ -26,6 +27,8 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
 
     public abstract String getName();
 
+
+    // Takes damage from the hero, if HP goes to 0, remove itself from the room.
     public void takeDamage(int damage) {
         LevelManager levelManager = LevelManager.getInstance();
         this.mobHP -= damage;
@@ -57,7 +60,7 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         LevelManager levelManager = LevelManager.getInstance();
         Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
         Position enemyPos = this.getPosition();
-        // Check the coordinates in which the hero is closer and if moving that coordinate will
+        // Check the coordinates in which the hero is closer and if moving that direction will generate a collision
         if (heroPos.getY() < enemyPos.getY() && !(checkCollision(enemyPos.plus(Direction.UP.asVector())))){
             return Direction.UP.asVector();
         } else if (heroPos.getX() < enemyPos.getX() && !(checkCollision(enemyPos.plus(Direction.LEFT.asVector())))){
@@ -66,12 +69,13 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
             return Direction.DOWN.asVector();
         } else if (heroPos.getX() > enemyPos.getX() && !(checkCollision(enemyPos.plus(Direction.RIGHT.asVector())))){
             return Direction.RIGHT.asVector();
-        }
+        }// If all the possible hero directions generate a collision, move at random
+        // This happens when there's a wall between the hero and the enemy
         return getRandomVectorMovement();
     }
 
 
-    //Get distance to hero
+    //Get distance from the enemy to the hero
     public double distanceToHero() {
         LevelManager levelManager = LevelManager.getInstance();
         Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
@@ -79,23 +83,24 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
         return heroPos.calculateDistance(enemyPos);
     }
 
+    // Handles the enemy movement
     public void movement() {
-        // Cria random new pos from random Vector2D
+        // Gets a random direction
         Position newRandomPos = this.getPosition().plus(getRandomVectorMovement());
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        // Se nao colidiu com nada na nova posiçao e esta dentro dos map bounds,
-        // entao move para a nova posiçao
+        // On a distance > 4.5 from the hero , If there is not collision and within map bounds, move to that pos
         if (distanceToHero() > 4.0) {
             if (!checkCollision(newRandomPos) && (checkInsideMapBounds(newRandomPos))) {
                 this.setPosition(newRandomPos);
             }
+            // From this distance (1.0-4.0 range) the enemy moves in the direction of the hero
         } else if (distanceToHero() > 1.0) {
             Position posDirectionHero = getPosition().plus(getDirectionHero());
             if (!checkCollision(posDirectionHero) && (checkInsideMapBounds(posDirectionHero))) {
                 this.setPosition(posDirectionHero);
             }
         }
-        else {
+        else { // If distance == 1.0, means the enemy is next to the hero, and attacks him
             LevelManager levelManager = LevelManager.getInstance();
             Hero hero = levelManager.getCurrentRoom().getHero();
             hero.changeHP(-damage);

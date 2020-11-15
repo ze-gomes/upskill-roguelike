@@ -1,7 +1,5 @@
 package pt.upskills.projeto.game;
 
-import java.util.Comparator;
-
 public class Score implements Comparable<Score> {
     String name;
     int score;
@@ -12,6 +10,7 @@ public class Score implements Comparable<Score> {
     }
 
 
+    // To sort scores in the array and calculate highscores
     @Override
     public int compareTo(Score s) {
         if (this.score > s.score){

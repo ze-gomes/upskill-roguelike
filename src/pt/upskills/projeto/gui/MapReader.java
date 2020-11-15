@@ -16,50 +16,46 @@ import java.util.Scanner;
 
 public class MapReader {
     private List<ImageTile> readMapObjects;
-    private Position heroPos;
+    private Position heroPos;  // Stores hero position for first map load
     private HashMap<Integer, Door> listaPortas;
-    private String doorKey;
-    private List<ImageTile> readMapImages;
+    private String doorKey; // Stores keyCode
+    private List<ImageTile> readMapImages; // Final list of objects to load the room
 
 
     public void readMaps() {
-        // Obtem a directoria do project para aceder ao ficheiro
         String localDir = System.getProperty("user.dir");
         // Correct path using localDir + relative path to the project
         File[] fileArray = new File(localDir + "\\rooms\\").listFiles();
-        // Obtem o levelManager para carregar os niveis no jogo
+        // Gets levelManager singleton to load all the game levels
         LevelManager levelManager = LevelManager.getInstance();
-        try {// carrega todos os ficheiros
+        try {
             for (File f : fileArray) {
-                // Para cada ficheiro cria e armazena uma lista de objectos ImageTile e uma Lista de Portas
+                // For each file, creates and stores a list of objects ImageTile and a HashMap of doors
                 readMapImages = new ArrayList<ImageTile>();
                 readMapObjects = new ArrayList<ImageTile>();
                 listaPortas = new HashMap<Integer, Door>();
                 Scanner fileScanner = new Scanner(f);
+                // Adds the floor to the whole room first (to avoid cases where the floor overlaps items/enemies)
                 addFloor();
-                // Contador para obter as coordenadas do y
                 int numLinha = 0;
                 while (fileScanner.hasNextLine()) {
                     String linha = fileScanner.nextLine();
-                    // Le e trata info de portas de cada mapa
+                    // Read and parses info for each of the doors in the room
                     if (linha.charAt(0) == '#') {
                         String[] porta = linha.split(" ");
                         lePortas(porta);
-                    } else { // Le e trata info do mapa
+                    } else { // Read and parses infor for the map
                         readLine(linha, numLinha);
                         numLinha++;
                     }
                 }
-                // Create room for each file and add to levelManager singleton
+                // Append all objects that are not Floor or Grass to the final list
                 readMapImages.addAll(readMapObjects);
+                // Create room for each file and add to levelManager
                 levelManager.addGameLevel(f.getName(), new Room(f.getName(), readMapImages, listaPortas));
-                // Fecha o fileScanner
                 fileScanner.close();
             }
-            // Sets first level
-            levelManager.setCurrentRoom("room0.txt");
         } catch (FileNotFoundException e) {
-            // Apanha e trata o erro
             System.out.println("Ficheiro não encontrado");
             e.printStackTrace();
         }
@@ -69,27 +65,28 @@ public class MapReader {
         return heroPos;
     }
 
+
+    // Parses door info
     public void lePortas(String[] porta) {
-        // Se a 3º posicao da linha é vazia, entao nao tem info de porta
-        // Simplesmente é o separador inicial ou final das info de portas
-        // Nesse caso nao faz nada
+        // Skips initial character separating door info
         if (porta.length > 1) {
             int numDoor = Integer.parseInt(porta[1]);
             String doorType = porta[2];
             String destRoom = porta[3];
             int destDoor = Integer.parseInt(porta[4]);
             if (doorType.equals("D")) {
-                // Só verifica se a porta tiver 1 key associada
-                // Só se a porta tiver chave cria uma porta fechada
+                // verifies if the door has a key associated
+                // Only if the door has a key associated it creates a closed door
                 if (porta.length == 6) {
                     doorKey = porta[5];
-                    // Crio portas com posiçoes (0,0) e depois quando percorro o mapa actualizo as posiçoes com o setPosicao
+                    // Create doors initially with (0,0) positions and update positions later when reading map
+                    // DoorClosed
                     Door portaFechada = new DoorClosed(new Position(0, 0), numDoor, destRoom, destDoor, doorKey);
                     listaPortas.put(numDoor, portaFechada);
-                } else {
+                } else { //Door Open
                     Door portaAberta = new DoorOpen(new Position(0, 0), numDoor, destRoom, destDoor);
                     listaPortas.put(numDoor, portaAberta);
-                }
+                } // Doorway
             } else if (doorType.equals("E")) {
                 Door semPorta = new DoorWay(new Position(0, 0), numDoor, destRoom, destDoor);
                 listaPortas.put(numDoor, semPorta);
@@ -167,6 +164,7 @@ public class MapReader {
                 case 'g':
                     pos = new Position(i, coordY);
                     ImageTile grass = new Grass(pos);
+                    // adds grass to the floor list, so it doesnt overlap items and enemies
                     readMapImages.add(grass);
                     break;
                 case 'k':

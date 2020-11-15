@@ -1,10 +1,11 @@
 package pt.upskills.projeto.gui;
 
 import pt.upskills.projeto.game.LevelManager;
-import pt.upskills.projeto.objects.Room;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -60,7 +61,9 @@ public class ImageMatrixGUI extends Observable {
 	private JFrame frame;
 	private JPanel panel;
 	private JPanel info;
+	// Created for extra costumizations
 	private JLabel label;
+	private JButton button;
 
 	private Map<String, ImageIcon> imageDB = new HashMap<String, ImageIcon>();
 
@@ -111,15 +114,31 @@ public class ImageMatrixGUI extends Observable {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initImages();
 		new KeyWatcher().start();
-		// create a label to display text
+
+
+		// create a label to display the current score
 		label = new JLabel("Current Score: 0");
 		label.setSize(180, 30);
 		label.setFont(new Font("SansSerif", Font.BOLD, 16));
 		label.setLocation(172, 22);
 		label.setForeground(Color.WHITE);
+		label.setBackground(Color.BLACK);
 		info.setLayout(null);
 		// add label to panel
 		info.add(label);
+		//BUtton
+		button = new JButton("Start Again");
+		button.setSize(130, 30);
+		button.setFont(new Font("SansSerif", Font.BOLD, 18));
+		button.setLocation(172, 250);
+		button.setForeground(Color.BLACK);
+		button.setBackground(Color.WHITE);
+		button.setBorderPainted(false);
+		button.setFocusPainted(false);
+		button.setVisible(false);
+		// Button action when clicked
+		panel.add(button);
+		//button.addActionListener(this);
 
 
 		frame.addKeyListener(new KeyListener() {
@@ -142,6 +161,8 @@ public class ImageMatrixGUI extends Observable {
 			}
 		});
 	}
+
+
 
 	synchronized void releaseObserver() {
 		notify();
@@ -355,9 +376,30 @@ public class ImageMatrixGUI extends Observable {
 	 */
 	public void update() {
 		frame.repaint();
+		// GUI Modifications - End Game Screen, Current Score info and Start Again Button
+		// update label with the current score
 		LevelManager levelManager = LevelManager.getInstance();
+		// Add current score to screen
 		label.setText("Current Score: " + levelManager.getTotalScore());
+		// If game is over, add Start again button
+//		if (levelManager.getGameOver()) {
+//			panel.setLayout(null);
+//			//panel.add(button);
+//			button.setVisible(true);
+//		}
 	}
+
+
+//	public void actionPerformed(ActionEvent e) {
+//		//panel.remove(button);
+//		button.setVisible(false);
+//		panel.repaint();
+//		LevelManager levelManager = LevelManager.getInstance();
+//		levelManager.restartGame();
+//		System.out.println("button clicked");
+//		frame.requestFocus();
+//	}
+
 
 	/**
 	 * Terminate window GUI

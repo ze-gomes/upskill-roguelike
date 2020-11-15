@@ -3,10 +3,11 @@ package pt.upskills.projeto.objects.environment;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
+// Super class for all the doors
 public abstract class Door implements ImageTile {
     private Position position;
     private int numDoor;
-    private String destRoom;
+    private String destRoom; // To know the destination of a given door
     private int destDoor;
 
     public Door(Position position, int numDoor, String destRoom, int destDoor) {

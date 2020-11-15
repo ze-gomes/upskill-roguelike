@@ -7,6 +7,7 @@ import pt.upskills.projeto.objects.environment.Wall;
 import pt.upskills.projeto.objects.mobs.Enemy;
 import pt.upskills.projeto.rogue.utils.Position;
 
+// Super class for all characters of the game, both Hero and Enemies
 public abstract class GameCharacter implements ImageTile {
     private Position position;
     private ImageTile collisionObject;
@@ -39,6 +40,7 @@ public abstract class GameCharacter implements ImageTile {
     public boolean checkCollision(Position pos) {
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
+        // Get tile in the room for the position we are doing the collision check
         ImageTile foundImage = currentRoom.checkPosition(pos);
         if (foundImage instanceof Enemy) {
             collisionObject = foundImage;
@@ -52,7 +54,7 @@ public abstract class GameCharacter implements ImageTile {
         } else if (foundImage instanceof Wall) {
             collisionObject = foundImage;
             return true;
-            // null means it's the Floor
+            // null means it's the Floor or Grass
         } else if (foundImage == null) {
             collisionObject = null;
             return false;

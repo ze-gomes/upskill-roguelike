@@ -3,11 +3,12 @@ package pt.upskills.projeto.objects.items;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
+// Class of Items that are interactable when you move over them
 public abstract class FloorInteractables implements ImageTile {
 
     private Position position;
     private int score;
-    private int damage; // Works for weapon damage and also GoodMeat HP
+    private int damage; // Works for both weapon damage and also GoodMeat and Potion HP.
 
     public FloorInteractables(Position position, int score, int damage) {
         this.position = position;

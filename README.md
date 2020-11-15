@@ -5,6 +5,8 @@
 First project in Java. A 2d roguelike game.
 Made in 1 week.
 
+7 different levels
+
 
 ## Game preview and Speedrun:
 ![SpeedRun](speedrun.gif "Title")

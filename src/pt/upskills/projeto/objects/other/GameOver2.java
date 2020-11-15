@@ -3,6 +3,8 @@ package pt.upskills.projeto.objects.other;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
+
+// End Game Screen Images
 public class GameOver2 implements ImageTile {
 
     private Position position;

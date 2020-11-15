@@ -15,8 +15,8 @@ import java.util.List;
 
 public class Room {
     private String nome;
-    private List<ImageTile> roomImages;
-    private HashMap<Integer, Door> listaPortas;
+    private List<ImageTile> roomImages; // Stores all the roomImages
+    private HashMap<Integer, Door> listaPortas; // Stores all the doors when the map is read from the file on a hash map with their ids as keys.
     private Hero hero;
 
 
@@ -44,15 +44,16 @@ public class Room {
     }
 
 
+    // Check a given position on the room, used for collision check and others
     public ImageTile checkPosition(Position position) {
         for (ImageTile tile : roomImages) {
             if (tile.getPosition().equals(position)) {
-                // If for a given position the object found is Not floor or Grass, return that object
+                // If for a given position the object found is Not floor and Not Grass, return that object
                 if (!(tile instanceof Floor) && !(tile instanceof Grass)) {
                     return tile;
                 }
             }
-        } // Else if nothing found return null (Means it's floor or Grass)
+        } // Else if nothing found return null (Means it's Floor or Grass)
         return null;
     }
 
@@ -74,18 +75,21 @@ public class Room {
         return null;
     }
 
+
+    // Opens a closed door with the respective Key
     public void openDoorWithKey(Door doorClosed){
         int numPortaFechada = doorClosed.getNumDoor();
         int destDoor = doorClosed.getDestDoor();
         String destRoom = doorClosed.getDestRoom();
         Position doorPos = doorClosed.getPosition();
+        // Creates a new similar door with the same attributes (except key code) but OpenDoor instead of closed door
         Door portaAberta = new DoorOpen(doorPos, numPortaFechada, destRoom, destDoor);
         removeObject(doorClosed);
         addObject(portaAberta);
         addDoor(portaAberta, numPortaFechada);
     }
 
-    // Mexe todos os enemigos da sala
+    // Moves all the enemies in the room
     public void moveEnemiesRoom() {
         for (ImageTile image : roomImages) {
             if (image instanceof Enemy) {
@@ -94,13 +98,14 @@ public class Room {
         }
     }
 
-
+    // Removes a object from both the gui and our room list
     public void removeObject(ImageTile tile) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         gui.removeImage(tile);
         roomImages.remove(tile);
     }
 
+    // Adds a object to both the gui and our room list
     public void addObject(ImageTile tile) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         gui.addImage(tile);

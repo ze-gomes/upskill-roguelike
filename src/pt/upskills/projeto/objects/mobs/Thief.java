@@ -35,14 +35,14 @@ public class Thief extends Enemy implements ImageTile {
         LevelManager levelManager = LevelManager.getInstance();
         Position heroPos = levelManager.getCurrentRoom().getHero().getPosition();
         Position enemyPos = this.getPosition();
-        // Check the coordinates in which the hero is closer and if moving that coordinate will
-        if (heroPos.getY() > enemyPos.getY()) { // Movimentos na Diagonal para baixo
+        // Check the coordinates in which the hero is closer and checks for collisions as well
+        if (heroPos.getY() > enemyPos.getY()) { // Movements on the diagonal in the Down direction
             if (heroPos.getX() > enemyPos.getX() && !(checkCollision(enemyPos.plus(diagonalMovements[0])))) {
                 return diagonalMovements[0];
             } else if (heroPos.getX() < enemyPos.getX() && !(checkCollision(enemyPos.plus(diagonalMovements[1])))) {
                 return diagonalMovements[1];
             }
-        } else if (heroPos.getY() < enemyPos.getY()) { // Movimentos na Diagonal para cima
+        } else if (heroPos.getY() < enemyPos.getY()) { // Movements on the diagonal in the Up direction
             if (heroPos.getX() > enemyPos.getX() && !(checkCollision(enemyPos.plus(diagonalMovements[2])))) {
                 return diagonalMovements[2];
             } else if (heroPos.getX() < enemyPos.getX() && !(checkCollision(enemyPos.plus(diagonalMovements[3])))) {
@@ -52,24 +52,24 @@ public class Thief extends Enemy implements ImageTile {
         return getRandomDiagonalMovement();
     }
 
-
+    // Thief has special movement different from other Enemies (moves in diagonal)
     @Override
     public void movement() {
-        // Cria random new pos from random Vector2D
+        // Creates random new position from random Vector2D
         Position newRandomPos = this.getPosition().plus(getRandomDiagonalMovement());
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        // Se nao colidiu com nada na nova posiçao e esta dentro dos map bounds,
-        // entao move para a nova posiçao
+        // On a distance > 4.5 from the hero , If there is not collision and within map bounds, move to that pos
         if (distanceToHero() > 4.5) {
             if (!checkCollision(newRandomPos) && (checkInsideMapBounds(newRandomPos))) {
                 this.setPosition(newRandomPos);
             }
+            // From this distance (4.5-2.0 range) the Thief moves in the direction of the hero
         } else if (distanceToHero() >=   2.0) {
             Position posDirectionHero = getPosition().plus(getDirectionHero());
             if (!checkCollision(posDirectionHero) && (checkInsideMapBounds(posDirectionHero))) {
                 this.setPosition(posDirectionHero);
             }
-        } else { // Thief can attack in diagonal (distance < 2)
+        } else { // Thief attacks in distance < 2.0 (can attack in diagonal)
             LevelManager levelManager = LevelManager.getInstance();
             Hero hero = levelManager.getCurrentRoom().getHero();
             hero.changeHP(-getDamage());
