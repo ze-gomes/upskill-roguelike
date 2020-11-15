@@ -15,7 +15,7 @@ public class Thief extends Enemy implements ImageTile {
 
 
     public Thief(Position position) {
-        super(position, 2, 6, 50);
+        super(position, 3, 8, 50);
     }
 
     @Override

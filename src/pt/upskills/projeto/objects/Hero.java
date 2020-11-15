@@ -31,7 +31,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     public Hero(Position position) {
         super(position);
         this.currentHP = maxHP;
-        this.damage = 2;
+        this.damage = 1;
         this.statusImages = new ArrayList<ImageTile>();
         this.currentItems = new HashMap<Integer, FloorInteractables>();
         this.score = 0;
@@ -42,18 +42,18 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     // Prevents score from dropping below 0
     public void changeScore(int score) {
         if (this.score + score < 0) {
-            this.score += 0;
+            this.score = 0;
         } else {
             this.score += score;
         }
     }
 
-    // Prevents damage from dropping below 0
-    public void changeDamage(int score) {
-        if (this.score + score < 0) {
-            this.score += 0;
+    // Prevents damage from dropping below 1
+    public void changeDamage(int damage) {
+        if (this.damage + damage < 0) {
+            this.damage = 1;
         } else {
-            this.score += score;
+            this.damage += damage;
         }
     }
 
@@ -193,6 +193,14 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     changeScore(floorHammer.getScore());
                     changeDamage(floorHammer.getDamage());
                 }
+            } else if (floorItem instanceof Axe) {
+                Axe floorAxe = (Axe) floorItem;
+                if (itemSlotsAvailable()) {
+                    addItem(floorAxe);
+                    currentRoom.removeObject(floorAxe);
+                    changeScore(floorAxe.getScore());
+                    changeDamage(floorAxe.getDamage());
+                }
             } else if (floorItem instanceof GoodMeat) {
                 GoodMeat floorGoodMeat = (GoodMeat) floorItem;
                 if (itemSlotsAvailable()) {
@@ -200,7 +208,18 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     currentRoom.removeObject(floorGoodMeat);
                     changeScore(floorGoodMeat.getScore());
                 }
-            } else if (floorItem instanceof Key) {
+            } else if (floorItem instanceof Potion) {
+                Potion floorPotion = (Potion) floorItem;
+                if (itemSlotsAvailable()) {
+                    addItem(floorPotion);
+                    currentRoom.removeObject(floorPotion);
+                    changeScore(floorPotion.getScore());
+                }
+            } else if (floorItem instanceof Trap) {
+                Trap floorTrap = (Trap) floorItem;
+                changeScore(floorTrap.getScore());
+                changeHP(-floorTrap.getDamage());
+            }  else if (floorItem instanceof Key) {
                 Key floorKey = (Key) floorItem;
                 if (itemSlotsAvailable()) {
                     addItem(floorKey);
@@ -218,7 +237,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         Room currentRoom = levelManager.getCurrentRoom();
         // Move if there is no collision and is inside bounds
         if (!checkCollision(newPos) && checkInsideMapBounds(newPos)) {
+            // Check if there are items on the floor to pickup
             checkIfGroundAction(newPos);
+            // Decrease score on walking
             changeScore(-1);
             setPosition(newPos);
             // If collision is Enemy, do damage and check if enemy dies
@@ -249,8 +270,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 if (floorItem != null) { // Interacting with closed door
                     Key key = (Key) floorItem;
                     if (key.getCode().equals(doorClosed.getKey())) {
-                        System.out.println("Opening door " + doorClosed.getNumDoor() + " with " + key.getCode());
+                        System.out.println("Opening door " + doorClosed.getNumDoor() + " with " + key.getCode() + " to " + doorClosed.getDestRoom());
                         gui.removeStatusImage(key);
+                        changeScore(50);
                         updateStatus();
                         // Para o heroi nao ficar invisivel (debaixo da porta) por esta ter sido adicionada por cima à tiles
                         gui.removeImage(this);
@@ -323,7 +345,12 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     if (item instanceof GoodMeat) {
                         changeHP(item.getDamage());
                         updateStatus();
+                    } else if (item instanceof Potion) {
+                        changeHP(item.getDamage());
+                        updateStatus();
                     } else {
+                        changeDamage(-item.getDamage());
+                        changeScore(-item.getScore());
                         item.setPosition(getPosition());
                         gui.removeImage(this);
                         currentRoom.addObject(item);
@@ -340,7 +367,12 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     if (item instanceof GoodMeat) {
                         changeHP(item.getDamage());
                         updateStatus();
+                    } else if (item instanceof Potion) {
+                        changeHP(item.getDamage());
+                        updateStatus();
                     } else {
+                        changeDamage(-item.getDamage());
+                        changeScore(-item.getScore());
                         item.setPosition(getPosition());
                         gui.removeImage(this);
                         currentRoom.addObject(item);
@@ -358,7 +390,14 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                     if (item instanceof GoodMeat) {
                         changeHP(item.getDamage());
                         updateStatus();
+                    } else if (item instanceof Potion) {
+                        // Adds life and more damage
+                        changeHP(item.getDamage());
+                        changeDamage(item.getDamage()/4);
+                        updateStatus();
                     } else {
+                        changeDamage(-item.getDamage());
+                        changeScore(-item.getScore());
                         item.setPosition(getPosition());
                         gui.removeImage(this);
                         currentRoom.addObject(item);

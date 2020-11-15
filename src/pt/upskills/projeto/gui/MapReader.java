@@ -139,6 +139,16 @@ public class MapReader {
                     Enemy bat = new Bat(pos);
                     readMapObjects.add(bat);
                     break;
+                case 'R':
+                    pos = new Position(i, coordY);
+                    Enemy rat = new Rat(pos);
+                    readMapObjects.add(rat);
+                    break;
+                case 'P':
+                    pos = new Position(i, coordY);
+                    Enemy scorpion = new Scorpion(pos);
+                    readMapObjects.add(scorpion);
+                    break;
                 case 'T':
                     pos = new Position(i, coordY);
                     Enemy thief = new Thief(pos);
@@ -164,6 +174,11 @@ public class MapReader {
                     FloorInteractables key = new Key(pos, doorKey);
                     readMapObjects.add(key);
                     break;
+                case 'a':
+                    pos = new Position(i, coordY);
+                    FloorInteractables axe = new Axe(pos);
+                    readMapObjects.add(axe);
+                    break;
                 case 't':
                     pos = new Position(i, coordY);
                     FloorInteractables trap = new Trap(pos);
@@ -173,6 +188,11 @@ public class MapReader {
                     pos = new Position(i, coordY);
                     FloorInteractables goodMeat = new GoodMeat(pos);
                     readMapObjects.add(goodMeat);
+                    break;
+                case 'p':
+                    pos = new Position(i, coordY);
+                    FloorInteractables potion = new Potion(pos);
+                    readMapObjects.add(potion);
                     break;
                 case '0':
                     pos = new Position(i, coordY);

@@ -3,14 +3,14 @@ package pt.upskills.projeto.objects.mobs;
 import pt.upskills.projeto.gui.ImageTile;
 import pt.upskills.projeto.rogue.utils.Position;
 
-public class BadGuy extends Enemy implements ImageTile {
+public class Scorpion extends Enemy implements ImageTile {
 
-    public BadGuy(Position position) {
-        super(position, 2, 6, 30);
+    public Scorpion(Position position) {
+        super(position, 3, 1, 30);
     }
 
     @Override
     public String getName() {
-        return "BadGuy";
+        return "Scorpion";
     }
 }

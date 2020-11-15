@@ -107,7 +107,6 @@ public class ImageMatrixGUI extends Observable {
 		frame.add(info, BorderLayout.NORTH);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		initImages();
 
 		new KeyWatcher().start();

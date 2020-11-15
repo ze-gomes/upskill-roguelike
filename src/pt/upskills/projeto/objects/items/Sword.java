@@ -5,7 +5,7 @@ import pt.upskills.projeto.rogue.utils.Position;
 
 public class Sword extends FloorInteractables implements ImageTile {
     public Sword(Position position) {
-        super (position, 10, 2);
+        super (position, 10, 1);
     }
 
     @Override

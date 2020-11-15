@@ -55,17 +55,22 @@ public class LevelManager {
 //    }
 
     public void changeLevel(Hero hero, Door door) {
-        Room destRoom = getGameLevel(door.getDestRoom());
-        Door destDoor = destRoom.getDoor(door.getDestDoor());
-        // Init gui and populate level
-        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-        hero.setPosition(destDoor.getPosition());
-        gui.clearImages();
-        List<ImageTile> tiles = destRoom.getRoomImages();
-        tiles.add(hero);
-        gui.newImages(tiles);
-        setCurrentRoom(door.getDestRoom());
-        getCurrentRoom().setHero(hero);
+       // If last level, game over
+        if (door.getDestRoom().equals("gameOver")){
+            hero.changeScore(200);
+            gameOver(hero.getScore());
+        } else {      // Init gui and populate level
+            Room destRoom = getGameLevel(door.getDestRoom());
+            Door destDoor = destRoom.getDoor(door.getDestDoor());
+            ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+            hero.setPosition(destDoor.getPosition());
+            gui.clearImages();
+            List<ImageTile> tiles = destRoom.getRoomImages();
+            tiles.add(hero);
+            gui.newImages(tiles);
+            setCurrentRoom(door.getDestRoom());
+            getCurrentRoom().setHero(hero);
+        }
     }
 
     // To save Hero instance for score writing purposes
@@ -84,7 +89,7 @@ public class LevelManager {
             while (fileScanner.hasNextLine()) {
                 String linha = fileScanner.nextLine();
                 // Read only highScore lines
-                System.out.println(linha);
+                //System.out.println(linha);
                 if (!(linha.charAt(0) == '-' || linha.charAt(0) == ' ')) {
                     String[] score = linha.split(" ");
                     int pos = Integer.parseInt(String.valueOf(score[0].charAt(0)));
@@ -132,7 +137,6 @@ public class LevelManager {
     public boolean checkifHighScore(int score) {
         getHighScores();
         Collections.sort(highscores);
-        System.out.println(highscores);
         for (int i = 0; i < 5; i++) {
             if (score > highscores.get(i).score) {
                 return true;
@@ -144,8 +148,15 @@ public class LevelManager {
 
     public void gameOver(int score) {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        Position pos1 = new Position(4,4);
+        Position pos2 = new Position(5,4);
+        ImageTile ga1 = new GameOver1(pos1);
+        ImageTile ga2 = new GameOver2(pos2);
+        gui.addImage(ga1);
+        gui.addImage(ga2);
+        gameOverStatus = true;
         if (checkifHighScore(score)){
-            System.out.println("Parabéns! Conseguiste ficar no Top5 de scores deste jogo!");
+            System.out.println("Parabéns! Conseguiste ficar no Top5 deste jogo com " + score + " pontos!");
             System.out.println("Introduz o teu nome para a ser gravado na lista:");
             try {
                 Scanner scanner = new Scanner(System.in);
@@ -154,21 +165,22 @@ public class LevelManager {
                 nome = nome.replace(" ", "-");
                 Score s = new Score(nome, score);
                 highscores.add(s);
-                Collections.sort(highscores);
+                System.out.println("Obrigado!");
+                scanner.close();
             } catch (NoSuchElementException e){
                 System.out.println("Nao introduziste nenhum nome, o resultado não foi gravado");
             }
+        } else {
+            System.out.println("Acabaste o jogo com " + score + " pontos! Não conseguiste ficar no Top5");
         }
+        Collections.sort(highscores);
         updateHighScore();
-        Position pos1 = new Position(4,4);
-        Position pos2 = new Position(5,4);
-        ImageTile ga1 = new GameOver1(pos1);
-        ImageTile ga2 = new GameOver2(pos2);
-        gui.addImage(ga1);
-        gui.addImage(ga2);
-        gameOverStatus = true;
-
-
+        String localDir = System.getProperty("user.dir");
+        try {
+            System.out.println(new String(Files.readAllBytes(Paths.get(localDir + "\\highscores\\highscores.txt"))));
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 

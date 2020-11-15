@@ -1,0 +1,14 @@
+#
+# 0 D room5.txt 1
+# 1 D gameOver 0 keyFinalGame
+#
+WWWWW0WWWW
+Wgggg gggW
+Wggg   ggW
+WgG     gW
+WpGW     W
+WWWW     W
+W T   mW W
+Wg WWW   W
+WkgW   T W
+WWWW1WWWWW
