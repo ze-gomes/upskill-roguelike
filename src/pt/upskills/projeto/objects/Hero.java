@@ -84,7 +84,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     }
 
     public FloorInteractables getKeyfromSlot() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 1; i <= 3; i++) {
             if (currentItems.get(i) instanceof Key) {
                 FloorInteractables item = currentItems.get(i);
                 currentItems.remove(i);

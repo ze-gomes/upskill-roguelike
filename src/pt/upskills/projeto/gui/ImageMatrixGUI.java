@@ -1,5 +1,6 @@
 package pt.upskills.projeto.gui;
 
+import pt.upskills.projeto.game.LevelManager;
 import pt.upskills.projeto.objects.Room;
 
 import javax.swing.*;
@@ -59,6 +60,7 @@ public class ImageMatrixGUI extends Observable {
 	private JFrame frame;
 	private JPanel panel;
 	private JPanel info;
+	private JLabel label;
 
 	private Map<String, ImageIcon> imageDB = new HashMap<String, ImageIcon>();
 
@@ -108,8 +110,17 @@ public class ImageMatrixGUI extends Observable {
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initImages();
-
 		new KeyWatcher().start();
+		// create a label to display text
+		label = new JLabel("Current Score: 0");
+		label.setSize(180, 30);
+		label.setFont(new Font("SansSerif", Font.BOLD, 16));
+		label.setLocation(172, 22);
+		label.setForeground(Color.WHITE);
+		info.setLayout(null);
+		// add label to panel
+		info.add(label);
+
 
 		frame.addKeyListener(new KeyListener() {
 
@@ -344,6 +355,8 @@ public class ImageMatrixGUI extends Observable {
 	 */
 	public void update() {
 		frame.repaint();
+		LevelManager levelManager = LevelManager.getInstance();
+		label.setText("Current Score: " + levelManager.getTotalScore());
 	}
 
 	/**
