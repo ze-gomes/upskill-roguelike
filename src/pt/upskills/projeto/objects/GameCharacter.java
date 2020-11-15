@@ -54,6 +54,7 @@ public abstract class GameCharacter implements ImageTile {
             return true;
             // null means it's the Floor
         } else if (foundImage == null) {
+            collisionObject = null;
             return false;
         }
         collisionObject = null;

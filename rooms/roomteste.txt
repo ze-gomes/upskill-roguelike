@@ -1,0 +1,14 @@
+#
+# 0 D room0.txt 0
+# 1 D gameOver 0 key
+#
+WWWWW0WWWW
+Wgggg gggW
+Wggg   ggW
+WgG     gW
+W   B  R W
+W P S    W
+W T  R  SW
+W  B SR  W
+W S k  T W
+WWWW1WWWWW

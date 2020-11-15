@@ -43,16 +43,6 @@ public class Room {
         return hero;
     }
 
-    public Hero getHero1() {
-        for (ImageTile tile : roomImages) {
-            if (tile instanceof Hero) {
-                Hero hero = (Hero) tile;
-                return hero;
-            }
-        }
-        return null;
-    }
-
 
     public ImageTile checkPosition(Position position) {
         for (ImageTile tile : roomImages) {
@@ -62,7 +52,7 @@ public class Room {
                     return tile;
                 }
             }
-        } // Else if nothing found return null (Means it's floor)
+        } // Else if nothing found return null (Means it's floor or Grass)
         return null;
     }
 
@@ -117,13 +107,4 @@ public class Room {
         roomImages.add(tile);
     }
 
-    // For some reason fireballs are appearing again when you pass a level and go back
-    // to the level where you launched them, this should fixit
-//    removeFireTiles(){
-//        for (ImageTile image : roomImages) {
-//            if (image instanceof Fire) {
-//                ((Enemy) image).movement();
-//            }
-//        }
-//    }
 }

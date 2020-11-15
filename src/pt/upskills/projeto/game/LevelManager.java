@@ -33,26 +33,6 @@ public class LevelManager {
         return INSTANCE;
     }
 
-//    public void startGame(String startLevel){
-//        // Read all maps to LevelManager
-//        MapReader mapReader  = new MapReader();
-//        mapReader.readMaps();
-//        // Set start level
-//        setCurrentRoom(startLevel);
-//        // Init gui and populate level
-//        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-//        List<ImageTile> tiles = getCurrentRoom().getRoomImages();
-//        Hero hero = new Hero(mapReader.getStartHeroPos());
-//        getCurrentRoom().setHero(hero);
-//        tiles.add(hero);
-//        gui.addObserver(hero);
-//        hero.updateStatus();
-//        gui.newImages(tiles);
-//        gui.go();
-//        while (true){
-//            gui.update();
-//        }
-//    }
 
     public void changeLevel(Hero hero, Door door) {
        // If last level, game over

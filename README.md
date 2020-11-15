@@ -2,15 +2,12 @@
 ![upskill logo](https://i.postimg.cc/C5JvGDsX/cropped-APDC-UPSKILLS-Logo-300x83.png) 
 # Java Curriculum
 
-UpSkill first project in Java. A roguelike game
+First project in Java. A 2d roguelike game.
+Made in 1 week.
 
-**Work in progress**
 
+## Game preview and Speedrun:
+![SpeedRun](speedrun.gif "Title")
 
-To do
-- Fix mob collisions
-- Fix Mob deletion
-- Traps and pickups
-- Save and restore game
-- Fireballs
-- Complete
+## Game Assets
+- [Pixel Dungeon](https://pixeldungeon.fandom.com/wiki/Main_Page)
