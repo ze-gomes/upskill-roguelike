@@ -1,5 +1,5 @@
 #
-# 0 D room0.txt 0
+# 0 D room0.txt 1
 # 1 E room2.txt 0
 # 2 D room3.txt 1 Key1
 #

@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.util.*;
 
 public class Hero extends GameCharacter implements ImageTile, Observer {
+    private String name;
     private int currentHP; // range 0-8
     private int maxHP = 8;
     private int fireballs = 3;
@@ -29,6 +30,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
 
     public Hero(Position position) {
         super(position);
+        this.name = "Hero";
         this.currentHP = maxHP;
         this.damage = 1; // start with 1 damage
         this.statusImages = new ArrayList<ImageTile>();
@@ -68,6 +70,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
 
     // Changes hero HP, prevents HP from going over the MaxHP or below 0
     public void changeHP(int damage) {
+        setName("HeroDMG");
         if (currentHP + damage > maxHP) {
             this.currentHP = maxHP;
         } else if (currentHP + damage < 0) {
@@ -97,12 +100,15 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
 
 
     // Get Key from item slot
-    public FloorInteractables getKeyfromSlot() {
+    public FloorInteractables getKeyfromSlot(String keycode) {
         for (int i = 1; i <= 3; i++) {
             if (currentItems.get(i) instanceof Key) {
-                FloorInteractables item = currentItems.get(i);
-                currentItems.remove(i);
-                return item;
+                Key item = (Key) currentItems.get(i);
+                // only if the key matches the door keycode
+                if (item.getCode().equals(keycode)){
+                    currentItems.remove(i);
+                    return item;
+                }
             }
         }
         return null;
@@ -163,7 +169,11 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
 
     @Override
     public String getName() {
-        return "Hero";
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getScore() {
@@ -259,6 +269,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
         LevelManager levelManager = LevelManager.getInstance();
         Room currentRoom = levelManager.getCurrentRoom();
+        setName("Hero");
         // Move if there is no collision and is inside map bounds
         if (!checkCollision(newPos) && checkInsideMapBounds(newPos)) {
             // Check if there are items on the floor to pickup
@@ -294,7 +305,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
                 DoorClosed doorClosed = (DoorClosed) getCollisionItem();
                 // Interacting with closed door
                 // Gets a key from item slot and check if it matches the door code with the key code.
-                FloorInteractables floorItem = getKeyfromSlot();
+                FloorInteractables floorItem = getKeyfromSlot(doorClosed.getKey());
                 if (floorItem != null) {
                     Key key = (Key) floorItem;
                     if (key.getCode().equals(doorClosed.getKey())) {
@@ -334,7 +345,8 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             updateStatus();
             /// Check if Hero HP goes to 0 to trigger the end of the game
             if (currentHP == 0) {
-                levelManager.gameOver(getScore());
+                setPosition(currentRoom.getDoor(0).getPosition());
+                //levelManager.gameOver(getScore());
             }
             if (keyCode == KeyEvent.VK_DOWN) {
                 Position newPos = getPosition().plus(Direction.DOWN.asVector());

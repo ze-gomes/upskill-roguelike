@@ -1,7 +1,8 @@
 #
-# 0 D room1.txt 0 Key0
+# 0 E room0.txt 0
+# 1 D room1.txt 0 Key0
 #
-WWWW0WWWWW
+WWWW1WWWWW
 Wggg ggggW
 WgB     gW
 WWWWWW  gW
@@ -10,4 +11,4 @@ Wg   W WWW
 Wg   W BgW
 Wgk  WW gW
 WgggHggggW
-WWWWWWWWWW
+WWWW0WWWWW

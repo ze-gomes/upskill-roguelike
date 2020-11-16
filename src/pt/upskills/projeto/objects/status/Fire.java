@@ -11,22 +11,28 @@ import pt.upskills.projeto.objects.mobs.Enemy;
 import pt.upskills.projeto.rogue.utils.Position;
 
 public class Fire implements FireTile {
+    String name;
     int damage = 6;
     private ImageTile collisionObject;
     private Position position;
 
     public Fire(Position position) {
         this.position = position;
+        this.name = "Fire";
     }
 
     @Override
     public String getName() {
-        return "Fire";
+        return name;
     }
 
     @Override
     public Position getPosition() {
         return position;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 
@@ -41,15 +47,19 @@ public class Fire implements FireTile {
             collisionObject = foundImage;
             Enemy enemy = (Enemy) collisionObject;
             enemy.takeDamage(this.damage);
+            setName("FireExplosion");
             return false;
         } else if (foundImage instanceof Hero) {
             collisionObject = foundImage;
+            setName("FireExplosion");
             return false;
         } else if (foundImage instanceof Door) {
             collisionObject = foundImage;
+            setName("FireExplosion");
             return false;
         } else if (foundImage instanceof Wall) {
             collisionObject = foundImage;
+            setName("FireExplosion");
             return false;
             // null means it's the Floor or Grass
         } else if (foundImage == null) {
