@@ -26,6 +26,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     private int score;
     private HashMap<Integer, FloorInteractables> currentItems; // Stores Items in the item slot
     private Integer lastKeycode = (Integer) KeyEvent.VK_UP; // Saves Default fireball direction
+    private int lives;
 
 
     public Hero(Position position) {
@@ -46,6 +47,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         this.currentItems = new HashMap<Integer, FloorInteractables>();
         this.score = 0;
         this.fireballs = 3;
+        this.lives = 3;
     }
 
 
@@ -70,7 +72,6 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
 
     // Changes hero HP, prevents HP from going over the MaxHP or below 0
     public void changeHP(int damage) {
-        setName("HeroDMG");
         if (currentHP + damage > maxHP) {
             this.currentHP = maxHP;
         } else if (currentHP + damage < 0) {
@@ -80,6 +81,9 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         }
     }
 
+    public int getLives() {
+        return lives;
+    }
 
     // Add item picked up to a HashMap<Integer, FloorInteractables> with keys 1-3 which represent the respective item slots
     public void addItem(FloorInteractables item) {
@@ -345,8 +349,8 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
             updateStatus();
             /// Check if Hero HP goes to 0 to trigger the end of the game
             if (currentHP == 0) {
-                setPosition(currentRoom.getDoor(0).getPosition());
-                //levelManager.gameOver(getScore());
+                lives--;
+                levelManager.gameOver(getScore());
             }
             if (keyCode == KeyEvent.VK_DOWN) {
                 Position newPos = getPosition().plus(Direction.DOWN.asVector());
