@@ -125,7 +125,7 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
         label.setLocation(144, 28);
         label.setForeground(Color.WHITE);
         label.setBackground(new Color(0, 0, 0, 130));
-        label.setBorder(new EmptyBorder(0,25,0,0));
+        label.setBorder(new EmptyBorder(0, 25, 0, 0));
         label.setOpaque(true);
         info.setLayout(null);
         // add label to panel
@@ -141,28 +141,27 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
         buttonRestartGame.setFocusPainted(false);
         buttonRestartGame.setVisible(false);
         // Button action when clicked
-        buttonRestartGame.addActionListener(this);
         panel.add(buttonRestartGame);
-        // Label New High Scores
-        labelNewHighscore = new JLabel("");
-        labelNewHighscore.setBorder(new EmptyBorder(5,5,5,5));
-        labelNewHighscore.setSize(380, 50);
-        labelNewHighscore.setLocation(80, 450);
-        labelNewHighscore.setForeground(Color.WHITE);
-        labelNewHighscore.setBackground( new Color(255, 0, 0, 130) );
-        labelNewHighscore.setOpaque(true);
-        labelNewHighscore.setVisible(false);
-        panel.add(labelNewHighscore);
         // Label High Scores
         labelHighscores = new JLabel("");
-        labelHighscores.setBorder(new EmptyBorder(0,10,0,0));
+        labelHighscores.setBorder(new EmptyBorder(0, 10, 0, 0));
         labelHighscores.setSize(210, 150);
         labelHighscores.setLocation(135, 20);
         labelHighscores.setForeground(Color.WHITE);
-        labelHighscores.setBackground( new Color(0, 0, 0, 130) );
+        labelHighscores.setBackground(new Color(0, 0, 0, 130));
         labelHighscores.setOpaque(true);
         labelHighscores.setVisible(false);
         panel.add(labelHighscores);
+        // Label New High Scores
+        labelNewHighscore = new JLabel("");
+        labelNewHighscore.setBorder(new EmptyBorder(5, 5, 5, 5));
+        labelNewHighscore.setSize(380, 50);
+        labelNewHighscore.setLocation(50, 420);
+        labelNewHighscore.setForeground(Color.WHITE);
+        labelNewHighscore.setBackground(new Color(255, 0, 0, 130));
+        labelNewHighscore.setOpaque(true);
+        labelNewHighscore.setVisible(false);
+        panel.add(labelNewHighscore);
         // Go to save button
         buttonRestartSave = new JButton("Restart Save");
         buttonRestartSave.setSize(150, 30);
@@ -174,19 +173,22 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
         buttonRestartSave.setFocusPainted(false);
         buttonRestartSave.setVisible(false);
         // Button action when clicked
-        buttonRestartSave.addActionListener(this);
         panel.add(buttonRestartSave);
         // LabelRetry
         labelRetry = new JLabel(" TEST");
         labelRetry.setVerticalAlignment(JLabel.BOTTOM);
-        labelRetry.setBorder(new EmptyBorder(0,10,10,0));
+        labelRetry.setBorder(new EmptyBorder(0, 10, 10, 0));
         labelRetry.setSize(210, 100);
         labelRetry.setLocation(135, 260);
         labelRetry.setForeground(Color.WHITE);
-        labelRetry.setBackground( new Color(0, 0, 0, 130) );
+        labelRetry.setBackground(new Color(0, 0, 0, 130));
         labelRetry.setOpaque(true);
         labelRetry.setVisible(false);
         panel.add(labelRetry);
+        buttonRestartSave.addActionListener(this);
+        buttonRestartGame.addActionListener(this);
+        panel.setLayout(null);
+
 
 
 
@@ -408,16 +410,14 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
      * not necessarily happen immediately after this instruction is issued)
      */
     public void update() {
-        frame.repaint();
         // GUI Modifications - End Game Screen, Current Score info and Start Again Button
         // update label with the current score
         LevelManager levelManager = LevelManager.getInstance();
         // Add current score to screen
         int currentScore = levelManager.getTotalScore();
-        label.setText("Current Score: " + currentScore );
+        label.setText("Current Score: " + currentScore);
         // If game is over, add Start again buttonRestartGame
         if (levelManager.getGameOver()) {
-            panel.setLayout(null);
             buttonRestartGame.setVisible(true);
             labelHighscores.setVisible(true);
             labelHighscores.setText("<html><p style=\"font-size:14px\">Current high Scores:</p> <br>" +
@@ -428,33 +428,38 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
                     levelManager.getHighscoresList().get(4) + "<br>" +
                     "</html>");
             int vidas = levelManager.getHeroInstance().getLives();
+            System.out.println(vidas + "vidas");
             if (levelManager.checkifHighScore(currentScore)) {
                 labelNewHighscore.setText("<html>Parabéns! Conseguiste ficar no Top5 deste jogo com " + currentScore + " pontos!<br>" +
                         "Introduz o teu nome na consola para gravar o resultado!</html>");
                 labelNewHighscore.setVisible(true);
             }
-
-            //if (vidas>0){
-            buttonRestartSave.setVisible(true);
-            labelRetry.setVisible(true);
+            if (vidas > 0) {
+                buttonRestartSave.setVisible(true);
+                labelRetry.setVisible(true);
                 labelRetry.setText("<html>Ainda tens " + vidas + " vidas, clica no botão<br> " +
                         "para voltares ao ultimo nivel gravado! Mas perdes 200 pontos!</html>");
-            //}
+            }
         }
+        frame.repaint();
     }
 
 
     public void actionPerformed(ActionEvent e) {
+        LevelManager levelManager = LevelManager.getInstance();
+        if (e.getSource()==buttonRestartGame){
+            levelManager.restartGame();
+        } else if (e.getSource()==buttonRestartSave){
+            levelManager.restartSavedLevel();
+        }
         buttonRestartGame.setVisible(false);
         buttonRestartSave.setVisible(false);
         labelHighscores.setVisible(false);
         labelNewHighscore.setVisible(false);
         labelRetry.setVisible(false);
         panel.repaint();
-        LevelManager levelManager = LevelManager.getInstance();
-        levelManager.restartGame();
-        System.out.println("buttonRestartGame clicked");
         frame.requestFocus();
+        frame.repaint();
     }
 
 

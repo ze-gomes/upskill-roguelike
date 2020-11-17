@@ -24,9 +24,9 @@ public class LevelManager {
     Map<String, Room> gameLevels = new HashMap<String, Room>(); // Stores all the loaded rooms
     Room currentRoom;
     Hero heroInstance;
-    List<Score> highscores; // List of Scores read from files
+    List<Score> highscores = new ArrayList<Score>(); // List of Scores read from files
     boolean gameOverStatus = false; // Store if game has ended
-    Room savedLevel = getGameLevel("room0.txt");
+    String savedLevel = "room0.txt";
 
     /**
      * @return Access to the Singleton instance of ImageMatrixGUI
@@ -45,12 +45,14 @@ public class LevelManager {
         mapReader.readMaps();
         // Set start level
         setCurrentRoom("room0.txt");
+        savedLevel = "room0.txt";
         // Init gui and populate level
         List<ImageTile> tiles = getCurrentRoom().getRoomImages();
         currentRoom.setHero(heroInstance);
         setHeroInstance(heroInstance);
         // Resets all hero defaults (score, life, etc)
         heroInstance.resetState();
+        heroInstance.setLives(3);
         heroInstance.setPosition(mapReader.getStartHeroPos());
         tiles.add(heroInstance);
         ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
@@ -61,10 +63,21 @@ public class LevelManager {
 
     // Restarts to saved level stored to door 0 . Subtracts score because of the death
     public void restartSavedLevel() {
+        ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+        gameOverStatus = false;
+        heroInstance.resetState();
+        heroInstance.updateStatus();
         if (heroInstance.getLives() > 0) {
-            heroInstance.changeScore(-200);
-            changeLevel(heroInstance, savedLevel.getDoor(0));
+            if (savedLevel.equals("room0.txt")) {
+                changeLevel(heroInstance, getGameLevel(savedLevel).getDoor(0));
+            }
+            else {
+                heroInstance.changeScore(-200);
+                changeLevel(heroInstance, getGameLevel(savedLevel).getDoor(1));
+            }
         }
+        gui.update();
+
     }
 
     public List<Score> getHighscoresList() {
@@ -83,6 +96,7 @@ public class LevelManager {
             Room destRoom = getGameLevel(door.getDestRoom());
             Door destDoor = destRoom.getDoor(door.getDestDoor());
             ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
+            gui.update();
             // Places hero in the correct destination door in the new room
             hero.setPosition(destDoor.getPosition());
             gui.clearImages();
@@ -95,11 +109,13 @@ public class LevelManager {
         // Saves every 2 levels depending on the door dest Room
         switch (door.getDestRoom()) {
             case "room2.txt":
-                savedLevel = getGameLevel("room2.txt");
+                savedLevel = "room2.txt";
+                break;
             case "room4.txt":
-                savedLevel = getGameLevel("room4.txt");
-            case "room6.txt":
-                savedLevel = getGameLevel("room6.txt");
+                savedLevel = "room4.txt";
+                break;
+            default:
+                break;
         }
     }
 
@@ -118,7 +134,7 @@ public class LevelManager {
 
     // Gets highscores from files
     public void getHighScores() {
-        highscores = new ArrayList<Score>();
+        highscores = new ArrayList<>();
         String localDir = System.getProperty("user.dir");
         // Correct path using localDir + relative path to the project
         File file = new File(localDir + "\\highscores\\highscores.txt");
@@ -200,35 +216,35 @@ public class LevelManager {
         gui.addImage(ga2);
         gameOverStatus = true;
         // Check if a score made it to the list, create score object and add it if so
-        if (checkifHighScore(score)) {
-            System.out.println("Parabéns! Conseguiste ficar no Top5 deste jogo com " + score + " pontos!");
-            System.out.println("Introduz o teu nome para a ser gravado na lista:");
-            try {
-                Scanner scanner = new Scanner(System.in);
-                String nome = scanner.nextLine();
-                //  No spaces allowed for name
-                nome = nome.replace(" ", "-");
-                Score s = new Score(nome, score);
-                highscores.add(s);
-                System.out.println("Obrigado!");
-                scanner.close();
-            } catch (NoSuchElementException e) {
-                System.out.println("Nao introduziste nenhum nome, o resultado não foi gravado");
-            } finally {
-                // Sort the list and update the highscores file with the new order (prints top5 only)
-                Collections.sort(highscores);
-                updateHighScore();
-            }
-        } else {
-            System.out.println("Acabaste o jogo com " + score + " pontos! Não conseguiste ficar no Top5");
-            try {
-                String localDir = System.getProperty("user.dir");
-                // Print the whole high scores file on the console for user feedback
-                System.out.println(new String(Files.readAllBytes(Paths.get(localDir + "\\highscores\\highscores.txt"))));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (checkifHighScore(score)) {
+//            System.out.println("Parabéns! Conseguiste ficar no Top5 deste jogo com " + score + " pontos!");
+//            System.out.println("Introduz o teu nome para a ser gravado na lista:");
+//            try {
+//                Scanner scanner = new Scanner(System.in);
+//                String nome = scanner.nextLine();
+//                //  No spaces allowed for name
+//                nome = nome.replace(" ", "-");
+//                Score s = new Score(nome, score);
+//                highscores.add(s);
+//                System.out.println("Obrigado!");
+//                scanner.close();
+//            } catch (NoSuchElementException e) {
+//                System.out.println("Nao introduziste nenhum nome, o resultado não foi gravado");
+//            } finally {
+//                // Sort the list and update the highscores file with the new order (prints top5 only)
+//                Collections.sort(highscores);
+//                updateHighScore();
+//            }
+//        } else {
+//            System.out.println("Acabaste o jogo com " + score + " pontos! Não conseguiste ficar no Top5");
+//        }
+//        try {
+//            String localDir = System.getProperty("user.dir");
+//            // Print the whole high scores file on the console for user feedback
+//            System.out.println(new String(Files.readAllBytes(Paths.get(localDir + "\\highscores\\highscores.txt"))));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 

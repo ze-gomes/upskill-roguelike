@@ -26,7 +26,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     private int score;
     private HashMap<Integer, FloorInteractables> currentItems; // Stores Items in the item slot
     private Integer lastKeycode = (Integer) KeyEvent.VK_UP; // Saves Default fireball direction
-    private int lives;
+    private int lives =3;
 
 
     public Hero(Position position) {
@@ -47,7 +47,6 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
         this.currentItems = new HashMap<Integer, FloorInteractables>();
         this.score = 0;
         this.fireballs = 3;
-        this.lives = 3;
     }
 
 
@@ -83,6 +82,10 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
 
     public int getLives() {
         return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     // Add item picked up to a HashMap<Integer, FloorInteractables> with keys 1-3 which represent the respective item slots
