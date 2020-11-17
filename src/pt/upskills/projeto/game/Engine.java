@@ -2,7 +2,6 @@ package pt.upskills.projeto.game;
 
 import pt.upskills.projeto.gui.ImageMatrixGUI;
 import pt.upskills.projeto.gui.ImageTile;
-import pt.upskills.projeto.gui.MapReader;
 import pt.upskills.projeto.objects.Hero;
 
 import java.util.List;

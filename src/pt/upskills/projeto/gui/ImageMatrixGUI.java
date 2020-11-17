@@ -1,6 +1,7 @@
 package pt.upskills.projeto.gui;
 
 import pt.upskills.projeto.game.LevelManager;
+import pt.upskills.projeto.objects.Hero;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -56,18 +57,19 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
     private final int SQUARE_SIZE;
     private final int N_SQUARES_WIDTH;
     private final int N_SQUARES_HEIGHT;
-
+    // To access some features to update info
+    LevelManager levelManager = LevelManager.getInstance();
     private JFrame frame;
     private JPanel panel;
     private JPanel info;
     // Created for extra costumizations
     private JLabel label;
     private JButton buttonRestartGame;
-    private JButton buttonRestartSave;
+    private JButton buttonRestoreSave;
     private JLabel labelHighscores;
     private JLabel labelNewHighscore;
     private JLabel labelRetry;
-
+    private JButton buttonSubmitHighscore;
     private Map<String, ImageIcon> imageDB = new HashMap<String, ImageIcon>();
 
     private List<ImageTile> images = new ArrayList<ImageTile>();
@@ -118,7 +120,7 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
         new KeyWatcher().start();
 
 
-        // create a label to display the current score
+        // Create a label to display the current score on the status bar
         label = new JLabel("Current Score: 0");
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
         label.setSize(193, 20);
@@ -127,69 +129,81 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
         label.setBackground(new Color(0, 0, 0, 130));
         label.setBorder(new EmptyBorder(0, 25, 0, 0));
         label.setOpaque(true);
-        info.setLayout(null);
-        // add label to panel
-        info.add(label);
-        // New Games button
+
+        // Restart game button
         buttonRestartGame = new JButton("New Game");
-        buttonRestartGame.setSize(150, 30);
+        buttonRestartGame.setSize(160, 30);
         buttonRestartGame.setFont(new Font("SansSerif", Font.BOLD, 18));
-        buttonRestartGame.setLocation(170, 380);
+        buttonRestartGame.setLocation(160, 430);
         buttonRestartGame.setForeground(Color.BLACK);
         buttonRestartGame.setBackground(Color.WHITE);
         buttonRestartGame.setBorderPainted(false);
         buttonRestartGame.setFocusPainted(false);
         buttonRestartGame.setVisible(false);
-        // Button action when clicked
-        panel.add(buttonRestartGame);
-        // Label High Scores
+        // Label to present High Scores at gameover
         labelHighscores = new JLabel("");
         labelHighscores.setBorder(new EmptyBorder(0, 10, 0, 0));
         labelHighscores.setSize(210, 150);
-        labelHighscores.setLocation(135, 20);
+        labelHighscores.setLocation(135, 10);
         labelHighscores.setForeground(Color.WHITE);
         labelHighscores.setBackground(new Color(0, 0, 0, 130));
         labelHighscores.setOpaque(true);
         labelHighscores.setVisible(false);
-        panel.add(labelHighscores);
-        // Label New High Scores
+        // Label New High Score Warning
         labelNewHighscore = new JLabel("");
         labelNewHighscore.setBorder(new EmptyBorder(5, 5, 5, 5));
-        labelNewHighscore.setSize(380, 50);
-        labelNewHighscore.setLocation(50, 420);
+        labelNewHighscore.setSize(390, 50);
+        labelNewHighscore.setLocation(45, 260);
         labelNewHighscore.setForeground(Color.WHITE);
         labelNewHighscore.setBackground(new Color(255, 0, 0, 130));
         labelNewHighscore.setOpaque(true);
         labelNewHighscore.setVisible(false);
-        panel.add(labelNewHighscore);
+        // Submit highscore button
+        buttonSubmitHighscore = new JButton("Submit Score");
+        buttonSubmitHighscore.setSize(160, 30);
+        buttonSubmitHighscore.setFont(new Font("SansSerif", Font.BOLD, 18));
+        buttonSubmitHighscore.setLocation(160, 390);
+        buttonSubmitHighscore.setForeground(Color.BLACK);
+        buttonSubmitHighscore.setBackground(Color.WHITE);
+        buttonSubmitHighscore.setBorderPainted(false);
+        buttonSubmitHighscore.setFocusPainted(false);
+        buttonSubmitHighscore.setVisible(false);
+        buttonSubmitHighscore.setEnabled(false);
         // Go to save button
-        buttonRestartSave = new JButton("Restart Save");
-        buttonRestartSave.setSize(150, 30);
-        buttonRestartSave.setFont(new Font("SansSerif", Font.BOLD, 18));
-        buttonRestartSave.setLocation(170, 265);
-        buttonRestartSave.setForeground(Color.BLACK);
-        buttonRestartSave.setBackground(Color.WHITE);
-        buttonRestartSave.setBorderPainted(false);
-        buttonRestartSave.setFocusPainted(false);
-        buttonRestartSave.setVisible(false);
-        // Button action when clicked
-        panel.add(buttonRestartSave);
-        // LabelRetry
-        labelRetry = new JLabel(" TEST");
+        buttonRestoreSave = new JButton("Restart Save");
+        buttonRestoreSave.setSize(160, 30);
+        buttonRestoreSave.setFont(new Font("SansSerif", Font.BOLD, 18));
+        buttonRestoreSave.setLocation(160, 350);
+        buttonRestoreSave.setForeground(Color.BLACK);
+        buttonRestoreSave.setBackground(Color.WHITE);
+        buttonRestoreSave.setBorderPainted(false);
+        buttonRestoreSave.setFocusPainted(false);
+        buttonRestoreSave.setVisible(false);
+        buttonRestoreSave.setEnabled(false);
+        // Label Lives left
+        labelRetry = new JLabel("");
         labelRetry.setVerticalAlignment(JLabel.BOTTOM);
         labelRetry.setBorder(new EmptyBorder(0, 10, 10, 0));
-        labelRetry.setSize(210, 100);
+        labelRetry.setSize(210, 80);
         labelRetry.setLocation(135, 260);
         labelRetry.setForeground(Color.WHITE);
         labelRetry.setBackground(new Color(0, 0, 0, 130));
         labelRetry.setOpaque(true);
         labelRetry.setVisible(false);
-        panel.add(labelRetry);
-        buttonRestartSave.addActionListener(this);
+        // Action Listenners for clicks on buttons
+        buttonRestoreSave.addActionListener(this);
         buttonRestartGame.addActionListener(this);
+        buttonSubmitHighscore.addActionListener(this);
+        //Add elements to window
+        info.add(label);
+        panel.add(buttonRestartGame);
+        panel.add(buttonRestoreSave);
+        panel.add(buttonSubmitHighscore);
+        panel.add(labelNewHighscore);
+        panel.add(labelHighscores);
+        panel.add(labelRetry);
+        info.setLayout(null);
         panel.setLayout(null);
-
-
 
 
         frame.addKeyListener(new KeyListener() {
@@ -366,6 +380,99 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
         }
     }
 
+
+    public void gameOver(Hero hero) {
+        // GUI Modifications - End Game Screen, Current Score info and Start Again Button
+        // update label on screen with the current score
+        int currentScore = hero.getScore();
+        label.setText("Current Score: " + currentScore);
+        // If game is over, add Start again buttonRestartGame
+        buttonRestartGame.setVisible(true);
+        labelHighscores.setVisible(true);
+        buttonRestoreSave.setVisible(true);
+        buttonSubmitHighscore.setVisible(true);
+        labelHighscores.setText("<html><p style=\"font-size:14px\">Current HighScores:</p> <br>" +
+                "1. " + levelManager.getHighscoresList().get(0) + "<br>" +
+                "2. " + levelManager.getHighscoresList().get(1) + "<br>" +
+                "3. " + levelManager.getHighscoresList().get(2) + "<br>" +
+                "4. " + levelManager.getHighscoresList().get(3) + "<br>" +
+                "5. " + levelManager.getHighscoresList().get(4) + "<br>" +
+                "</html>");
+        int vidas = hero.getLives();
+        if (vidas > 0) {
+            buttonRestoreSave.setEnabled(true);
+            labelRetry.setVisible(true);
+            labelRetry.setText("<html>You still have " + vidas + " lives left, click Restart Save " +
+                    "to go back to the last saved room! But you lose 200 points!</html>");
+        } else if (levelManager.checkifHighScore(currentScore)) {
+            labelNewHighscore.setText("<html>Congratulations! You made it to top5 with " + currentScore + " points!<br>" +
+                    "Click Submit Scores and enter your name in the console to save it!</html>");
+            labelNewHighscore.setVisible(true);
+            buttonSubmitHighscore.setEnabled(true);
+        }
+
+    }
+
+    // Disables buttons and labels created on the end game screen
+    public void disableButtonsandLabels(){
+        buttonRestoreSave.setEnabled(false);
+        buttonRestartGame.setVisible(false);
+        buttonRestoreSave.setVisible(false);
+        buttonSubmitHighscore.setVisible(false);
+        buttonSubmitHighscore.setEnabled(false);
+        labelHighscores.setVisible(false);
+        labelNewHighscore.setVisible(false);
+        labelRetry.setVisible(false);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == buttonRestartGame) {
+            levelManager.restartGame();
+            disableButtonsandLabels();
+        } else if (e.getSource() == buttonRestoreSave) {
+            levelManager.restartSavedLevel();
+            disableButtonsandLabels();
+        } else if (e.getSource() == buttonSubmitHighscore) {
+            levelManager.submitHighscore();
+            buttonSubmitHighscore.setEnabled(false);
+        }
+        panel.repaint();
+        frame.requestFocus();
+        frame.repaint();
+    }
+
+
+    /**
+     * Force scheduling of a new window paint (this may take a while, it does
+     * not necessarily happen immediately after this instruction is issued)
+     */
+    public void update() {
+        // update label on screen with the current score
+        int currentScore = levelManager.getHeroInstance().getScore();
+        label.setText("Current Score: " + currentScore);
+        frame.repaint();
+    }
+
+
+    /**
+     * Terminate window GUI
+     */
+    public void dispose() {
+        images.clear();
+        statusImages.clear();
+        imageDB.clear();
+        frame.dispose();
+    }
+
+    /**
+     * Grid dimensions
+     *
+     * @return the width and height of the image grid
+     */
+    public Dimension getGridDimension() {
+        return new Dimension(N_SQUARES_WIDTH, N_SQUARES_HEIGHT);
+    }
+
     @SuppressWarnings("serial") // Added 2-Mar-2016
     private class RogueWindow extends JPanel {
         @Override
@@ -403,83 +510,6 @@ public class ImageMatrixGUI extends Observable implements ActionListener {
             } catch (InterruptedException e) {
             }
         }
-    }
-
-    /**
-     * Force scheduling of a new window paint (this may take a while, it does
-     * not necessarily happen immediately after this instruction is issued)
-     */
-    public void update() {
-        // GUI Modifications - End Game Screen, Current Score info and Start Again Button
-        // update label with the current score
-        LevelManager levelManager = LevelManager.getInstance();
-        // Add current score to screen
-        int currentScore = levelManager.getTotalScore();
-        label.setText("Current Score: " + currentScore);
-        // If game is over, add Start again buttonRestartGame
-        if (levelManager.getGameOver()) {
-            buttonRestartGame.setVisible(true);
-            labelHighscores.setVisible(true);
-            labelHighscores.setText("<html><p style=\"font-size:14px\">Current high Scores:</p> <br>" +
-                    levelManager.getHighscoresList().get(0) + "<br>" +
-                    levelManager.getHighscoresList().get(1) + "<br>" +
-                    levelManager.getHighscoresList().get(2) + "<br>" +
-                    levelManager.getHighscoresList().get(3) + "<br>" +
-                    levelManager.getHighscoresList().get(4) + "<br>" +
-                    "</html>");
-            int vidas = levelManager.getHeroInstance().getLives();
-            System.out.println(vidas + "vidas");
-            if (levelManager.checkifHighScore(currentScore)) {
-                labelNewHighscore.setText("<html>Parabéns! Conseguiste ficar no Top5 deste jogo com " + currentScore + " pontos!<br>" +
-                        "Introduz o teu nome na consola para gravar o resultado!</html>");
-                labelNewHighscore.setVisible(true);
-            }
-            if (vidas > 0) {
-                buttonRestartSave.setVisible(true);
-                labelRetry.setVisible(true);
-                labelRetry.setText("<html>Ainda tens " + vidas + " vidas, clica no botão<br> " +
-                        "para voltares ao ultimo nivel gravado! Mas perdes 200 pontos!</html>");
-            }
-        }
-        frame.repaint();
-    }
-
-
-    public void actionPerformed(ActionEvent e) {
-        LevelManager levelManager = LevelManager.getInstance();
-        if (e.getSource()==buttonRestartGame){
-            levelManager.restartGame();
-        } else if (e.getSource()==buttonRestartSave){
-            levelManager.restartSavedLevel();
-        }
-        buttonRestartGame.setVisible(false);
-        buttonRestartSave.setVisible(false);
-        labelHighscores.setVisible(false);
-        labelNewHighscore.setVisible(false);
-        labelRetry.setVisible(false);
-        panel.repaint();
-        frame.requestFocus();
-        frame.repaint();
-    }
-
-
-    /**
-     * Terminate window GUI
-     */
-    public void dispose() {
-        images.clear();
-        statusImages.clear();
-        imageDB.clear();
-        frame.dispose();
-    }
-
-    /**
-     * Grid dimensions
-     *
-     * @return the width and height of the image grid
-     */
-    public Dimension getGridDimension() {
-        return new Dimension(N_SQUARES_WIDTH, N_SQUARES_HEIGHT);
     }
 
 }

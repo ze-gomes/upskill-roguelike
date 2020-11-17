@@ -104,6 +104,7 @@ public abstract class Enemy extends GameCharacter implements ImageTile {
             LevelManager levelManager = LevelManager.getInstance();
             Hero hero = levelManager.getCurrentRoom().getHero();
             hero.changeHP(-damage);
+            levelManager.play();
             hero.updateStatus();
 
         }

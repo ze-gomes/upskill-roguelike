@@ -40,7 +40,7 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
     }
 
 
-    // Test function for game restart
+    // Restarts the hero state for restarting the game
     public void resetState(){
         this.currentHP = maxHP;
         this.damage = 1; // start with 1 damage
@@ -86,6 +86,10 @@ public class Hero extends GameCharacter implements ImageTile, Observer {
 
     public void setLives(int lives) {
         this.lives = lives;
+    }
+
+    public void setCurrentHP(int currentHP) {
+        this.currentHP = currentHP;
     }
 
     // Add item picked up to a HashMap<Integer, FloorInteractables> with keys 1-3 which represent the respective item slots
