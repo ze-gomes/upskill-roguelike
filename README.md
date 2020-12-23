@@ -1,7 +1,6 @@
 ﻿
 ![upskill logo](https://i.postimg.cc/C5JvGDsX/cropped-APDC-UPSKILLS-Logo-300x83.png) 
-# Java Curriculum
-
+# Upskill Java - 1st Project
 First project in Java. A 2d roguelike game.
 Made in 1 week.
 
