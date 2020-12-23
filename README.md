@@ -12,3 +12,6 @@ Made in 1 week.
 
 ## Game Assets
 - [Pixel Dungeon](https://pixeldungeon.fandom.com/wiki/Main_Page)
+
+## Full Curriculum
+For the full curriculum of the UPskill program check [this repository](https://github.com/ze-gomes/upskill-java)
